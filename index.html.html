@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cris Temperos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@400;600;700;800&family=Dancing+Script:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --g1:#0f3d22; --g2:#1a5c34; --g3:#2e7d52; --g4:#52b788;
+  --g5:#95d5b2; --g6:#d8f3dc; --g7:#f0faf2;
+  --white:#ffffff; --cream:#f8fef9; --gold:#c9a84c; --gold2:#e0b84e; --text:#0f2d18;
+}
+html, body {
+  width:100%; height:100%;
+  font-family:'Nunito',sans-serif;
+  background:var(--g1);
+  overflow: hidden;
+}
+#app {
+  width:100%; height:100%;
+  position: relative;
+}
+
+/* PAGES — cada tela ocupa 100% da viewport, empilhadas fora da tela */
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+  z-index: 1;
+}
+.page.visible {
+  transform: translateX(0);
+  z-index: 2;
+}
+.page.leaving {
+  transform: translateX(-40%);
+  z-index: 1;
+  pointer-events: none;
+}
+/* Banner começa visível sem animação */
+#banner {
+  transform: translateX(0);
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════
+   BANNER PAGE  
+══════════════════════════════════════ */
+#banner {
+  background: linear-gradient(160deg, #071f12 0%, #0f3d22 35%, #1a5c34 65%, #2e7d52 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  overflow-y: auto;
+  padding: 10px 16px 70px;
+}
+
+/* Fundo decorativo — pontos */
+#banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(201,168,76,.18) 0%, transparent 38%),
+    radial-gradient(circle at 90% 85%, rgba(82,183,136,.22) 0%, transparent 38%),
+    radial-gradient(circle at 75% 10%, rgba(201,168,76,.10) 0%, transparent 28%),
+    radial-gradient(circle, rgba(82,183,136,.10) 1.5px, transparent 1.5px);
+  background-size: auto, auto, auto, 26px 26px;
+  pointer-events: none; z-index: 0;
+}
+
+/* Moldura interna */
+.banner-frame {
+  position: absolute;
+  inset: clamp(10px, 3vw, 20px);
+  border: 1.5px solid rgba(201,168,76,.25);
+  border-radius: 18px;
+  pointer-events: none; z-index: 0;
+}
+.banner-frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(201,168,76,.12);
+  border-radius: 13px;
+}
+
+/* Folhas decorativas nos cantos */
+.banner-leaf {
+  position: absolute; font-size: clamp(2rem, 5vw, 3.2rem);
+  opacity: .12; user-select: none; pointer-events: none; z-index: 0;
+  line-height: 1;
+}
+.bl-tl { top: clamp(16px,4vw,32px); left: clamp(16px,4vw,36px); transform: rotate(-25deg); }
+.bl-tr { top: clamp(16px,4vw,32px); right: clamp(16px,4vw,36px); transform: rotate(25deg) scaleX(-1); }
+.bl-bl { bottom: clamp(50px,8vw,70px); left: clamp(16px,4vw,36px); transform: rotate(15deg); }
+.bl-br { bottom: clamp(50px,8vw,70px); right: clamp(16px,4vw,36px); transform: rotate(-15deg) scaleX(-1); }
+
+/* Conteúdo central */
+.banner-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 560px;
+  gap: 0;
+}
+
+/* Tagline topo */
+.banner-sub {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+  color: #95d5b2;
+  letter-spacing: 1px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: clamp(10px, 2.5vw, 16px);
+  animation: bfadeUp .5s ease .05s both;
+  text-align: center;
+  line-height: 1.3;
+}
+.banner-sub::before, .banner-sub::after {
+  content: ''; display: inline-block;
+  width: clamp(12px, 3vw, 22px); height: 1px;
+  background: rgba(149,213,178,.35); flex-shrink: 0;
+}
+
+/* Logo principal */
+.banner-logo {
+  display: flex; flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(4px, 1.5vw, 10px);
+  animation: bfadeUp .5s ease .15s both;
+}
+.banner-nome-cris {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 10vw, 4rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: clamp(5px, 2vw, 12px);
+  text-transform: uppercase;
+  text-shadow: 0 4px 24px rgba(0,0,0,.5);
+  line-height: 1;
+}
+.banner-nome-temperos {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.2rem, 13vw, 5.8rem);
+  font-weight: 700;
+  font-style: italic;
+  color: #c9a84c;
+  letter-spacing: clamp(1px, .5vw, 3px);
+  line-height: 1.05;
+  text-shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+
+/* Divisor */
+.banner-divisor {
+  width: clamp(140px, 50%, 220px);
+  display: flex; align-items: center;
+  gap: 10px;
+  margin: clamp(6px, 1.5vw, 12px) auto clamp(10px, 2.5vw, 16px);
+  animation: bfadeUp .5s ease .25s both;
+}
+.banner-divisor::before, .banner-divisor::after {
+  content: ''; flex: 1; height: 1px;
+}
+.banner-divisor::before { background: linear-gradient(to right, transparent, rgba(201,168,76,.65)); }
+.banner-divisor::after  { background: linear-gradient(to left,  transparent, rgba(201,168,76,.65)); }
+.banner-star { color: #c9a84c; font-size: 1rem; }
+
+/* Selos */
+.banner-selos {
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+  margin-bottom: clamp(12px, 3vw, 20px);
+  animation: bfadeUp .5s ease .35s both;
+}
+.banner-selo {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(201,168,76,.35);
+  border-radius: 40px;
+  padding: clamp(6px, 1.5vw, 9px) clamp(14px, 3.5vw, 22px);
+  font-size: clamp(.72rem, 2.2vw, .84rem);
+  font-weight: 800;
+  color: #f0faf2;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+  backdrop-filter: blur(4px);
+}
+
+/* Contatos */
+.banner-contatos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 16px);
+  margin-bottom: clamp(14px, 3.5vw, 22px);
+  width: 100%;
+  animation: bfadeUp .5s ease .45s both;
+}
+.banner-contato {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(15,61,34,.65);
+  border: 1.5px solid rgba(82,183,136,.28);
+  border-radius: 14px;
+  padding: clamp(10px, 2.5vw, 14px) clamp(16px, 3.5vw, 22px);
+  backdrop-filter: blur(6px);
+  flex: 1;
+  min-width: clamp(170px, 42vw, 210px);
+  max-width: 250px;
+  transition: border-color .2s, background .2s;
+  cursor: pointer;
+  text-decoration: none;
+}
+.banner-contato:hover, .banner-contato:active {
+  background: rgba(15,61,34,.85);
+  border-color: rgba(82,183,136,.55);
+}
+.banner-icone {
+  width: clamp(34px, 8vw, 42px);
+  height: clamp(34px, 8vw, 42px);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(.9rem, 2.8vw, 1.1rem);
+  flex-shrink: 0;
+}
+.b-wpp   { background: #25D366; }
+.b-insta { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.banner-cinfo { display: flex; flex-direction: column; line-height: 1.3; flex: 1; min-width: 0; }
+.banner-clabel {
+  font-size: clamp(.55rem, 1.6vw, .65rem);
+  color: #95d5b2; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.banner-cvalor {
+  font-size: clamp(.8rem, 2.4vw, .94rem);
+  color: #fff; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Botão catálogo */
+.btn-catalogo {
+  background: linear-gradient(135deg, var(--gold) 0%, #e0b84e 100%);
+  color: #0f2d18;
+  border: none; border-radius: 14px;
+  padding: clamp(14px, 3.5vw, 18px) clamp(32px, 9vw, 52px);
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(.95rem, 3.2vw, 1.12rem);
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .5px;
+  box-shadow: 0 6px 28px rgba(201,168,76,.38), 0 2px 8px rgba(0,0,0,.2);
+  transition: all .22s;
+  display: flex; align-items: center; gap: 8px;
+  animation: bfadeUp .5s ease .55s both;
+  width: 100%;
+  max-width: 340px;
+  justify-content: center;
+}
+.btn-catalogo:hover, .btn-catalogo:active {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(201,168,76,.5), 0 4px 12px rgba(0,0,0,.2);
+}
+
+/* Rodapé do banner */
+.banner-rodape {
+  position: absolute;
+  bottom: clamp(10px, 2.5vw, 18px);
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 1;
+  padding: 0 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  animation: bfadeUp .5s ease .65s both;
+}
+.banner-rodape-principal {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.25rem, 4.2vw, 1.6rem);
+  color: rgba(201,168,76,.98);
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+.banner-rodape-entrega {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(.88rem, 2.8vw, 1.05rem);
+  font-weight: 800;
+  color: #95d5b2;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+/* Animações */
+@keyframes bfadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════ */
+#home {
+  background: linear-gradient(170deg,#f0faf2 0%,#d8f3dc 55%,#b7e4c7 100%);
+}
+.home-header {
+  text-align:center; padding: clamp(24px, 6vw, 40px) 24px 20px;
+  position:relative;
+}
+.home-header::before {
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(circle,#2e7d5218 1.5px,transparent 1.5px);
+  background-size:24px 24px; pointer-events:none;
+}
+.badge {
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(.9rem, 2.5vw, 1.05rem);
+  color:var(--g3); display:block; margin-bottom:6px; position:relative;
+}
+.home-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,7vw,3rem);
+  font-weight:700; color:var(--g1); line-height:1.1; position:relative;
+}
+.home-title em { color:var(--g4); font-style:italic; display:block; }
+.home-sub {
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(1rem, 3vw, 1.15rem);
+  color:var(--gold); margin-top:6px; position:relative;
+}
+
+/* GRID */
+.grid-wrap { padding:16px 16px 40px; flex:1; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:clamp(8px, 2vw, 14px);
+  max-width:760px; margin:0 auto;
+}
+@media(min-width:480px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+@media(min-width:768px){ .grid{ grid-template-columns:repeat(4,1fr); } }
+
+.cat-card {
+  background:var(--white); border:2px solid var(--g6); border-radius:16px;
+  padding:clamp(14px, 3vw, 20px) clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 16px);
+  display:flex; flex-direction:column;
+  align-items:center; gap:8px; cursor:pointer;
+  transition:all .22s ease;
+  box-shadow:0 2px 10px rgba(15,61,34,.08);
+  user-select:none;
+}
+.cat-card:active,.cat-card:hover {
+  background:var(--g1); border-color:var(--g1);
+  transform:translateY(-3px); box-shadow:0 8px 24px rgba(15,61,34,.22);
+}
+.cat-card:active .cat-label,.cat-card:hover .cat-label { color:var(--white); }
+.cat-card:active .cat-qty,.cat-card:hover .cat-qty { color:var(--g5); }
+.cat-emoji { font-size:clamp(1.6rem, 5vw, 2.2rem); line-height:1; }
+.cat-label {
+  font-size:clamp(.65rem, 1.8vw, .74rem);
+  font-weight:800; color:var(--g1); text-align:center;
+  text-transform:uppercase; letter-spacing:.3px; line-height:1.3; transition:color .22s;
+}
+.cat-qty {
+  font-size:clamp(.6rem, 1.6vw, .66rem);
+  color:var(--g4); font-weight:600; transition:color .22s;
+}
+
+/* ── CATEGORY PAGE ── */
+.cat-page { background:var(--cream); }
+.cat-page-header {
+  background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 100%);
+  padding: clamp(10px, 2.5vw, 16px) clamp(12px, 3vw, 18px);
+  display:flex; align-items:center; gap:12px;
+  flex-shrink:0; position:relative; overflow:hidden; z-index:10;
+}
+.cat-page-header::after {
+  content:''; position:absolute; right:-20px; top:-20px;
+  width:100px; height:100px; background:rgba(255,255,255,.05);
+  border-radius:50%; pointer-events:none;
+}
+.back-btn {
+  background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.35);
+  color:white; min-width:44px; height:44px; border-radius:12px; cursor:pointer;
+  font-size:1.2rem; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .2s; font-family:'Nunito',sans-serif;
+  font-weight:800; padding:0 12px; gap:4px;
+}
+.back-btn:active,.back-btn:hover { background:rgba(255,255,255,.3); }
+.header-icon { font-size:clamp(1.4rem, 4vw, 1.9rem); flex-shrink:0; }
+.header-info { flex:1; min-width:0; }
+.header-cat-small {
+  font-size:.6rem; color:var(--g5);
+  text-transform:uppercase; letter-spacing:2px; font-weight:700;
+}
+.header-cat-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.9rem,3.5vw,1.35rem);
+  color:white; font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.cat-page-body { flex:1; padding:clamp(12px, 3vw, 18px) clamp(12px, 3vw, 16px) 40px; }
+
+/* NOTA */
+.note {
+  background:#fffbeb; border-left:4px solid var(--gold); border-radius:10px;
+  padding:10px 14px; font-size:.78rem; color:#7a5a1a; font-style:italic;
+  margin-bottom:16px; line-height:1.5;
+}
+
+/* SUB TITULO */
+.sub-title {
+  font-family:'Playfair Display',serif; font-size:.9rem; color:var(--g2); font-weight:700;
+  margin:18px 0 10px; display:flex; align-items:center; gap:6px;
+  padding-bottom:6px; border-bottom:2px dashed var(--g6);
+}
+.sub-title:first-child { margin-top:4px; }
+
+/* PRODUTOS */
+.prod-list { display:flex; flex-direction:column; gap:8px; }
+.prod-item {
+  background:white; border:1.5px solid var(--g6); border-radius:12px;
+  padding:clamp(10px, 2.5vw, 14px) clamp(12px, 3vw, 16px);
+  display:flex; align-items:center;
+  justify-content:space-between; gap:10px;
+  transition:border-color .18s,background .18s;
+}
+.prod-item:active { background:var(--g7); border-color:var(--g4); }
+.prod-name {
+  font-size:clamp(.78rem, 2.2vw, .84rem);
+  color:var(--text); font-weight:600; line-height:1.4; flex:1;
+}
+.prod-price {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.78rem, 2.2vw, .84rem);
+  color:var(--g3); font-weight:700; white-space:nowrap;
+  background:var(--g6); padding:4px 10px; border-radius:20px; flex-shrink:0;
+}
+
+/* Botão voltar ao banner na home */
+.home-footer {
+  display:flex; justify-content:center;
+  padding:0 16px clamp(24px, 5vw, 36px);
+}
+.btn-voltar-banner {
+  background:transparent; border:1.5px solid var(--g4);
+  color:var(--g2); border-radius:12px;
+  padding:10px 24px; font-family:'Nunito',sans-serif;
+  font-size:.82rem; font-weight:700;
+  cursor:pointer; letter-spacing:.3px;
+  display:flex; align-items:center; gap:6px;
+  transition:all .2s;
+}
+.btn-voltar-banner:hover,.btn-voltar-banner:active {
+  background:var(--g6); border-color:var(--g3);
+}
+
+/* ── RESPONSIVO DESKTOP ── */
+@media(min-width:768px){
+  #banner { padding: 32px 24px 90px; }
+  .banner-contatos { gap: 16px; }
+  .banner-contato { flex: 0 0 auto; }
+  .btn-catalogo { max-width: 360px; }
+}
+@media(min-width:1024px){
+  .banner-inner { max-width: 640px; }
+  .banner-nome-cris { letter-spacing: 18px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ═══════════ BANNER ═══════════ -->
+<div id="banner" class="page visible">
+  <div class="banner-frame"></div>
+  <div class="banner-leaf bl-tl">🌿</div>
+  <div class="banner-leaf bl-tr">🌿</div>
+  <div class="banner-leaf bl-bl">🌱</div>
+  <div class="banner-leaf bl-br">🌱</div>
+
+  <div class="banner-inner">
+
+    <div class="banner-sub">Queijos, farinhas, temperos e outros!!</div>
+
+    <div class="banner-logo">
+      <span class="banner-nome-cris">Cris</span>
+      <span class="banner-nome-temperos">Temperos</span>
+    </div>
+
+    <div class="banner-divisor"><span class="banner-star">✦</span></div>
+
+    <div class="banner-selos">
+      <div class="banner-selo">🤲 100% Artesanal</div>
+      <div class="banner-selo">🏪 Banca Licenciada</div>
+    </div>
+
+    <div class="banner-contatos">
+      <a class="banner-contato" href="https://wa.me/5534996408672" target="_blank" rel="noopener">
+        <div class="banner-icone b-wpp">💬</div>
+        <div class="banner-cinfo">
+          <span class="banner-clabel">WhatsApp</span>
+          <span class="banner-cvalor">(34) 99640-8672</span>
+        </div>
+      </a>
+      <a class="banner-contato" href="https://instagram.com/cristina_temperos" target="_blank" rel="noopener">
+        <div class="banner-icone b-insta">📸</div>
+        <div class="banner-cinfo">
+          <span class="banner-clabel">Instagram</span>
+          <span class="banner-cvalor">@cristina_temperos</span>
+        </div>
+      </a>
+    </div>
+
+    <button class="btn-catalogo" id="btn-ver-catalogo">🧺 Ver Catálogo Completo</button>
+
+  </div>
+
+  <div class="banner-rodape">
+    <div class="banner-rodape-principal">✦ Consulte disponibilidade e valores no atacado! ✦</div>
+    <div class="banner-rodape-entrega">🛵 Fazemos entregas!</div>
+  </div>
+</div>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div id="home" class="page">
+  <div class="home-header">
+    <span class="badge">✦ Cris Temperos ✦</span>
+    <h1 class="home-title">Catálogo de <em>Produtos</em></h1>
+    <p class="home-sub">🧺 Produtos frescos e caseiros 🧺</p>
+  </div>
+  <div class="grid-wrap">
+    <div class="grid">
+      <div class="cat-card" onclick="show('alhos')"><span class="cat-emoji">🧄</span><span class="cat-label">Alhos &amp; Temperos</span><span class="cat-qty">6 produtos</span></div>
+      <div class="cat-card" onclick="show('amendoins')"><span class="cat-emoji">🥜</span><span class="cat-label">Amendoins &amp; Castanhas</span><span class="cat-qty">10 produtos</span></div>
+      <div class="cat-card" onclick="show('bananadas')"><span class="cat-emoji">🍌</span><span class="cat-label">Bananadas &amp; Goiabadas</span><span class="cat-qty">7 produtos</span></div>
+      <div class="cat-card" onclick="show('doces')"><span class="cat-emoji">🍮</span><span class="cat-label">Doces Caseiros</span><span class="cat-qty">10 produtos</span></div>
+      <div class="cat-card" onclick="show('frango')"><span class="cat-emoji">🍗</span><span class="cat-label">Frango</span><span class="cat-qty">1 produto</span></div>
+      <div class="cat-card" onclick="show('graos')"><span class="cat-emoji">🌾</span><span class="cat-label">Grãos &amp; Farinhas</span><span class="cat-qty">13 produtos</span></div>
+      <div class="cat-card" onclick="show('meis')"><span class="cat-emoji">🍯</span><span class="cat-label">Méis &amp; Derivados</span><span class="cat-qty">6 produtos</span></div>
+      <div class="cat-card" onclick="show('ovos')"><span class="cat-emoji">🥚</span><span class="cat-label">Ovos Caipiras</span><span class="cat-qty">2 tipos</span></div>
+      <div class="cat-card" onclick="show('pimentas')"><span class="cat-emoji">🌶</span><span class="cat-label">Pimentas &amp; Molhos</span><span class="cat-qty">17 produtos</span></div>
+      <div class="cat-card" onclick="show('queijos')"><span class="cat-emoji">🧀</span><span class="cat-label">Queijos &amp; Laticínios</span><span class="cat-qty">6 produtos</span></div>
+      <div class="cat-card" onclick="show('rapaduras')"><span class="cat-emoji">🌽</span><span class="cat-label">Rapaduras &amp; Farinhas Regionais</span><span class="cat-qty">7 produtos</span></div>
+      <div class="cat-card" onclick="show('especiarias')"><span class="cat-emoji">🌿</span><span class="cat-label">Especiarias &amp; Ervas</span><span class="cat-qty">36 produtos</span></div>
+      <div class="cat-card" onclick="show('chas')"><span class="cat-emoji">🍵</span><span class="cat-label">Chás</span><span class="cat-qty">8 produtos</span></div>
+    </div>
+  </div>
+  <div class="home-footer">
+    <button class="btn-voltar-banner" id="btn-voltar-banner">← Voltar ao início</button>
+  </div>
+</div>
+
+<!-- ═══════════ CATEGORIAS ═══════════ -->
+
+<!-- ALHOS -->
+<div id="alhos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-alhos">← Voltar</button>
+    <span class="header-icon">🧄</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Alhos e Temperos</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Alho cabeça (4 un)</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho descascado</span><span class="prod-price">R$ 50,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Alho triturado</span><span class="prod-price">R$ 50,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Sal com limão 150g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sal do Himalaia 200ml</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Temperos caseiros (copo)</span><span class="prod-price">R$ 5,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- AMENDOINS -->
+<div id="amendoins" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-amendoins">← Voltar</button>
+    <span class="header-icon">🥜</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Amendoins, Castanhas e Derivados</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🥜 Amendoins</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Amendoim com açúcar 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim com cacau 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim japonês 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim limpo e torrado 250g</span><span class="prod-price">R$ 9,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim limpo e torrado C/S 500g</span><span class="prod-price">R$ 18,00</span></div>
+    </div>
+    <div class="sub-title">🌰 Castanhas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Castanha de caju C/S 160g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Castanha de caju S/S 160g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Castanha do Pará 130g</span><span class="prod-price">R$ 25,00</span></div>
+    </div>
+    <div class="sub-title">🍬 Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Paçoca 370g</span><span class="prod-price">R$ 14,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pé de moleque 300g</span><span class="prod-price">R$ 15,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANANADAS -->
+<div id="bananadas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-bananadas">← Voltar</button>
+    <span class="header-icon">🍌</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Bananadas e Goiabadas</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍌 Bananadas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Bananada de colher 500g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bananinha caseira 300g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bananinha zero açúcar (10 un)</span><span class="prod-price">R$ 16,00</span></div>
+    </div>
+    <div class="sub-title">🍈 Goiabadas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 200g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 400g</span><span class="prod-price">R$ 16,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 700g</span><span class="prod-price">R$ 22,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada de colher 500g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCES -->
+<div id="doces" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-doces">← Voltar</button>
+    <span class="header-icon">🍮</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Doces Caseiros</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍬 Balinhas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Balinha de coco 250g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Balinha fini pote 150g</span><span class="prod-price">R$ 15,00</span></div>
+    </div>
+    <div class="sub-title">🥛 Doce de Leite</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Doce de leite com mamão 300g</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de leite em pedacinhos 300g</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de leite inteiro 400g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de leite pastoso 450g</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de queijo 300g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pingo de leite 450g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+    <div class="sub-title">🫙 Geleias</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Geleia de mocotó 400g</span><span class="prod-price">R$ 14,00</span></div>
+      <div class="prod-item"><span class="prod-name">Geleia tradicional 350g</span><span class="prod-price">R$ 14,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FRANGO -->
+<div id="frango" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-frango">← Voltar</button>
+    <span class="header-icon">🍗</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Frango</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Frango inteiro semi caipira</span><span class="prod-price">R$ 55,00</span></div>
+    </div>
+    <div class="note" style="margin-top:14px">🐓 Criado de forma semi-caipira — mais sabor e qualidade para a sua mesa!</div>
+  </div>
+</div>
+
+<!-- GRAOS -->
+<div id="graos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-graos">← Voltar</button>
+    <span class="header-icon">🌾</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Grãos, Farinhas e Cereais</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🥣 Cereais e Sementes</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Ameixas 150g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Aveia flocos 250g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chia 160g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Granola 180g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Milho de pipoca 250g</span><span class="prod-price">R$ 6,00</span></div>
+      <div class="prod-item"><span class="prod-name">Uvas passas 150g</span><span class="prod-price">R$ 10,00</span></div>
+    </div>
+    <div class="sub-title">🌽 Farinhas e Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Creme de milho 500g</span><span class="prod-price">R$ 6,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de aveia 200g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de puba 1kg</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de rosca 250g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Fubá 500g</span><span class="prod-price">R$ 6,00</span></div>
+      <div class="prod-item"><span class="prod-name">Massa de tapioca 500g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Polvilho doce 1kg</span><span class="prod-price">R$ 16,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MEIS -->
+<div id="meis" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-meis">← Voltar</button>
+    <span class="header-icon">🍯</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Méis e Derivados</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍯 Mel Silvestre</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Mel silvestre 280g</span><span class="prod-price">R$ 24,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mel silvestre 500g</span><span class="prod-price">R$ 35,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mel silvestre 1kg</span><span class="prod-price">R$ 60,00</span></div>
+      <div class="prod-item"><span class="prod-name">Favo de mel 340g</span><span class="prod-price">R$ 30,00</span></div>
+    </div>
+    <div class="sub-title">🌿 Outros Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Própolis branco 20ml</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Xarope de mel 450g</span><span class="prod-price">R$ 24,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- OVOS -->
+<div id="ovos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-ovos">← Voltar</button>
+    <span class="header-icon">🥚</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Ovos Caipiras e Semi</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Jumbo semi caipira — 30 ovos</span><span class="prod-price">R$ 34,00</span></div>
+      <div class="prod-item"><span class="prod-name">Extra semi caipira — 30 ovos</span><span class="prod-price">R$ 33,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIMENTAS -->
+<div id="pimentas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-pimentas">← Voltar</button>
+    <span class="header-icon">🌶</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Pimentas e Molhos</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🫙 Molhos</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Molho pimenta dedo de moça 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Molho pimenta malagueta 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta malagueta no óleo 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta malagueta no óleo 350g</span><span class="prod-price">R$ 30,00</span></div>
+    </div>
+    <div class="sub-title">🌶 Pimentas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Pimenta arriba saia 350g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta biquinho 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta bode 200ml</span><span class="prod-price">R$ 12,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta bode 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Carolina Reaper 350g</span><span class="prod-price">R$ 40,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta cumari vermelha 350g</span><span class="prod-price">R$ 35,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta dedo de moça 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta roxa 175g</span><span class="prod-price">R$ 10,00</span></div>
+    </div>
+    <div class="sub-title">🫒 Conservas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Conserva de jurubeba 340g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Conserva de pequi 500g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Creme de pequi 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Jiló baby no vinagre 500g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tiras de pequi 350g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUEIJOS -->
+<div id="queijos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-queijos">← Voltar</button>
+    <span class="header-icon">🧀</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Queijos e Laticínios</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Manteiga de leite 250ml</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo fresco</span><span class="prod-price">R$ 35,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo meia cura</span><span class="prod-price">R$ 49,90/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo ralado 500g</span><span class="prod-price">R$ 29,99</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo trança</span><span class="prod-price">R$ 90,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Requeijão caipira 300g</span><span class="prod-price">R$ 29,99</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- RAPADURAS -->
+<div id="rapaduras" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-rapaduras">← Voltar</button>
+    <span class="header-icon">🌽</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Rapaduras e Farinhas Regionais</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🌾 Farinhas Regionais</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Farinha biju mandioca</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha biju milho</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha goiana mandioca</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha temperada ao alho 500g</span><span class="prod-price">R$ 14,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha temperada sabor costela</span><span class="prod-price">R$ 28,00/kg</span></div>
+    </div>
+    <div class="sub-title">🍬 Rapaduras</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Rapadura Salinas 1kg</span><span class="prod-price">R$ 16,00</span></div>
+      <div class="prod-item"><span class="prod-name">Rapadura Salinas 1,5kg</span><span class="prod-price">R$ 35,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ESPECIARIAS -->
+<div id="especiarias" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-especiarias">← Voltar</button>
+    <span class="header-icon">🌿</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Especiarias e Ervas</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Açafrão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho desidratado</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho frito</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Ana Maria</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bacon</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bife acebolado</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Caldo de galinha</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Carne de vaca</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Carne gourmet</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cebola Crispe</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cheiro verde</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chimichurri</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chimi-Limão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Colorau</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cominho</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Costela</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Curry</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Edu Guedes</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Lemon pepper</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mais Alho</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Orégano</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica defumada</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica doce</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica picante</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pega Esposa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pega Marido</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Calabresa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Rosa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta-do-reino</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Salada gourmet</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sertanejo</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero baiano</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero de Feijão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempera Tudo</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero do Chefe</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tomilho</span><span class="prod-price">R$ 4,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHÁS -->
+<div id="chas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-chas">← Voltar</button>
+    <span class="header-icon">🍵</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Chás</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Alecrim</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Camomila</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Canela em pó</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cravo-da-índia</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Erva-doce</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Folha de Louro</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Hibisco</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Noz-moscada</span><span class="prod-price">R$ 5,00</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+  var current = 'banner';
+  var cats = ['alhos','amendoins','bananadas','doces','frango','graos','meis','ovos','pimentas','queijos','rapaduras','especiarias','chas'];
+
+  function show(id) {
+    if (id === current) return;
+    var fromEl = document.getElementById(current);
+    var toEl   = document.getElementById(id);
+
+    // Página de destino entra da direita
+    toEl.style.transition = 'none';
+    toEl.style.transform  = 'translateX(100%)';
+    toEl.classList.add('visible');
+    toEl.scrollTop = 0;
+
+    // Força reflow para aplicar posição inicial antes de animar
+    toEl.offsetHeight;
+
+    toEl.style.transition = '';
+    toEl.style.transform  = '';
+
+    // Página atual sai para a esquerda
+    fromEl.classList.add('leaving');
+    fromEl.classList.remove('visible');
+
+    fromEl.addEventListener('transitionend', function cleanup() {
+      fromEl.removeEventListener('transitionend', cleanup);
+      fromEl.classList.remove('leaving');
+      fromEl.style.transform = 'translateX(100%)';
+    });
+
+    current = id;
+  }
+
+  function back() { showBack('home'); }
+
+  function showBack(id) {
+    if (id === current) return;
+    var fromEl = document.getElementById(current);
+    var toEl   = document.getElementById(id);
+
+    // Página de destino entra da ESQUERDA (voltar)
+    toEl.style.transition = 'none';
+    toEl.style.transform  = 'translateX(-40%)';
+    toEl.classList.add('visible');
+    toEl.scrollTop = 0;
+
+    toEl.offsetHeight;
+
+    toEl.style.transition = '';
+    toEl.style.transform  = '';
+
+    // Página atual sai para a direita
+    fromEl.style.transition = fromEl.style.transition || '';
+    fromEl.classList.remove('visible');
+    fromEl.style.transform = 'translateX(100%)';
+
+    fromEl.addEventListener('transitionend', function cleanup() {
+      fromEl.removeEventListener('transitionend', cleanup);
+      fromEl.style.transform = 'translateX(100%)';
+    });
+
+    current = id;
+  }
+
+  document.getElementById('btn-ver-catalogo').addEventListener('click', function(e) {
+    e.preventDefault(); show('home');
+  });
+  document.getElementById('btn-voltar-banner').addEventListener('click', function(e) {
+    e.preventDefault(); showBack('banner');
+  });
+
+  cats.forEach(function(id) {
+    var btn = document.getElementById('back-' + id);
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation(); back();
+      });
+    }
+  });
+</script>
+</body>
+</html>
