@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cris Temperos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@400;600;700;800&family=Dancing+Script:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --g1:#0f3d22; --g2:#1a5c34; --g3:#2e7d52; --g4:#52b788;
+  --g5:#95d5b2; --g6:#d8f3dc; --g7:#f0faf2;
+  --white:#ffffff; --cream:#f8fef9; --gold:#c9a84c; --gold2:#e0b84e; --text:#0f2d18;
+}
+html, body {
+  width:100%; height:100%;
+  font-family:'Nunito',sans-serif;
+  background:var(--g1);
+  overflow: hidden;
+}
+#app {
+  width:100%; height:100%;
+  position: relative;
+}
+
+/* PAGES — cada tela ocupa 100% da viewport, empilhadas fora da tela */
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+  z-index: 1;
+}
+.page.visible {
+  transform: translateX(0);
+  z-index: 2;
+}
+.page.leaving {
+  transform: translateX(-40%);
+  z-index: 1;
+  pointer-events: none;
+}
+/* Banner começa visível sem animação */
+#banner {
+  transform: translateX(0);
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════
+   BANNER PAGE  
+══════════════════════════════════════ */
+#banner {
+  background: linear-gradient(160deg, #071f12 0%, #0f3d22 35%, #1a5c34 65%, #2e7d52 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  overflow-y: auto;
+  padding: 10px 16px 70px;
+}
+
+/* Fundo decorativo — pontos */
+#banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(201,168,76,.18) 0%, transparent 38%),
+    radial-gradient(circle at 90% 85%, rgba(82,183,136,.22) 0%, transparent 38%),
+    radial-gradient(circle at 75% 10%, rgba(201,168,76,.10) 0%, transparent 28%),
+    radial-gradient(circle, rgba(82,183,136,.10) 1.5px, transparent 1.5px);
+  background-size: auto, auto, auto, 26px 26px;
+  pointer-events: none; z-index: 0;
+}
+
+/* Moldura interna */
+.banner-frame {
+  position: absolute;
+  inset: clamp(10px, 3vw, 20px);
+  border: 1.5px solid rgba(201,168,76,.25);
+  border-radius: 18px;
+  pointer-events: none; z-index: 0;
+}
+.banner-frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(201,168,76,.12);
+  border-radius: 13px;
+}
+
+/* Folhas decorativas nos cantos */
+.banner-leaf {
+  position: absolute; font-size: clamp(2rem, 5vw, 3.2rem);
+  opacity: .12; user-select: none; pointer-events: none; z-index: 0;
+  line-height: 1;
+}
+.bl-tl { top: clamp(16px,4vw,32px); left: clamp(16px,4vw,36px); transform: rotate(-25deg); }
+.bl-tr { top: clamp(16px,4vw,32px); right: clamp(16px,4vw,36px); transform: rotate(25deg) scaleX(-1); }
+.bl-bl { bottom: clamp(50px,8vw,70px); left: clamp(16px,4vw,36px); transform: rotate(15deg); }
+.bl-br { bottom: clamp(50px,8vw,70px); right: clamp(16px,4vw,36px); transform: rotate(-15deg) scaleX(-1); }
+
+/* Conteúdo central */
+.banner-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 560px;
+  gap: 0;
+}
+
+/* Tagline topo */
+.banner-sub {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+  color: #95d5b2;
+  letter-spacing: 1px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: clamp(10px, 2.5vw, 16px);
+  animation: bfadeUp .5s ease .05s both;
+  text-align: center;
+  line-height: 1.3;
+}
+.banner-sub::before, .banner-sub::after {
+  content: ''; display: inline-block;
+  width: clamp(12px, 3vw, 22px); height: 1px;
+  background: rgba(149,213,178,.35); flex-shrink: 0;
+}
+
+/* Logo principal */
+.banner-logo {
+  display: flex; flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(4px, 1.5vw, 10px);
+  animation: bfadeUp .5s ease .15s both;
+}
+.banner-nome-cris {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 10vw, 4rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: clamp(5px, 2vw, 12px);
+  text-transform: uppercase;
+  text-shadow: 0 4px 24px rgba(0,0,0,.5);
+  line-height: 1;
+}
+.banner-nome-temperos {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.2rem, 13vw, 5.8rem);
+  font-weight: 700;
+  font-style: italic;
+  color: #c9a84c;
+  letter-spacing: clamp(1px, .5vw, 3px);
+  line-height: 1.05;
+  text-shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+
+/* Divisor */
+.banner-divisor {
+  width: clamp(140px, 50%, 220px);
+  display: flex; align-items: center;
+  gap: 10px;
+  margin: clamp(6px, 1.5vw, 12px) auto clamp(10px, 2.5vw, 16px);
+  animation: bfadeUp .5s ease .25s both;
+}
+.banner-divisor::before, .banner-divisor::after {
+  content: ''; flex: 1; height: 1px;
+}
+.banner-divisor::before { background: linear-gradient(to right, transparent, rgba(201,168,76,.65)); }
+.banner-divisor::after  { background: linear-gradient(to left,  transparent, rgba(201,168,76,.65)); }
+.banner-star { color: #c9a84c; font-size: 1rem; }
+
+/* Selos */
+.banner-selos {
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+  margin-bottom: clamp(12px, 3vw, 20px);
+  animation: bfadeUp .5s ease .35s both;
+}
+.banner-selo {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(201,168,76,.35);
+  border-radius: 40px;
+  padding: clamp(6px, 1.5vw, 9px) clamp(14px, 3.5vw, 22px);
+  font-size: clamp(.72rem, 2.2vw, .84rem);
+  font-weight: 800;
+  color: #f0faf2;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+  backdrop-filter: blur(4px);
+}
+
+/* Contatos */
+.banner-contatos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 16px);
+  margin-bottom: clamp(14px, 3.5vw, 22px);
+  width: 100%;
+  animation: bfadeUp .5s ease .45s both;
+}
+.banner-contato {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(15,61,34,.65);
+  border: 1.5px solid rgba(82,183,136,.28);
+  border-radius: 14px;
+  padding: clamp(10px, 2.5vw, 14px) clamp(16px, 3.5vw, 22px);
+  backdrop-filter: blur(6px);
+  flex: 1;
+  min-width: clamp(170px, 42vw, 210px);
+  max-width: 250px;
+  transition: border-color .2s, background .2s;
+  cursor: pointer;
+  text-decoration: none;
+}
+.banner-contato:hover, .banner-contato:active {
+  background: rgba(15,61,34,.85);
+  border-color: rgba(82,183,136,.55);
+}
+.banner-icone {
+  width: clamp(34px, 8vw, 42px);
+  height: clamp(34px, 8vw, 42px);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(.9rem, 2.8vw, 1.1rem);
+  flex-shrink: 0;
+}
+.b-wpp   { background: #25D366; }
+.b-insta { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.banner-cinfo { display: flex; flex-direction: column; line-height: 1.3; flex: 1; min-width: 0; }
+.banner-clabel {
+  font-size: clamp(.55rem, 1.6vw, .65rem);
+  color: #95d5b2; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.banner-cvalor {
+  font-size: clamp(.8rem, 2.4vw, .94rem);
+  color: #fff; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Botão catálogo */
+.btn-catalogo {
+  background: linear-gradient(135deg, var(--gold) 0%, #e0b84e 100%);
+  color: #0f2d18;
+  border: none; border-radius: 14px;
+  padding: clamp(14px, 3.5vw, 18px) clamp(32px, 9vw, 52px);
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(.95rem, 3.2vw, 1.12rem);
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .5px;
+  box-shadow: 0 6px 28px rgba(201,168,76,.38), 0 2px 8px rgba(0,0,0,.2);
+  transition: all .22s;
+  display: flex; align-items: center; gap: 8px;
+  animation: bfadeUp .5s ease .55s both;
+  width: 100%;
+  max-width: 340px;
+  justify-content: center;
+}
+.btn-catalogo:hover, .btn-catalogo:active {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(201,168,76,.5), 0 4px 12px rgba(0,0,0,.2);
+}
+
+/* Rodapé do banner */
+.banner-rodape {
+  position: absolute;
+  bottom: clamp(10px, 2.5vw, 18px);
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 1;
+  padding: 0 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  animation: bfadeUp .5s ease .65s both;
+}
+.banner-rodape-principal {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.25rem, 4.2vw, 1.6rem);
+  color: rgba(201,168,76,.98);
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+.banner-rodape-entrega {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(.88rem, 2.8vw, 1.05rem);
+  font-weight: 800;
+  color: #95d5b2;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+/* Animações */
+@keyframes bfadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════ */
+#home {
+  background: linear-gradient(170deg,#f0faf2 0%,#d8f3dc 55%,#b7e4c7 100%);
+}
+.home-header {
+  text-align:center; padding: clamp(24px, 6vw, 40px) 24px 20px;
+  position:relative;
+}
+.home-header::before {
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(circle,#2e7d5218 1.5px,transparent 1.5px);
+  background-size:24px 24px; pointer-events:none;
+}
+.badge {
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(.9rem, 2.5vw, 1.05rem);
+  color:var(--g3); display:block; margin-bottom:6px; position:relative;
+}
+.home-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,7vw,3rem);
+  font-weight:700; color:var(--g1); line-height:1.1; position:relative;
+}
+.home-title em { color:var(--g4); font-style:italic; display:block; }
+.home-sub {
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(1rem, 3vw, 1.15rem);
+  color:var(--gold); margin-top:6px; position:relative;
+}
+
+/* GRID */
+.grid-wrap { padding:16px 16px 40px; flex:1; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:clamp(8px, 2vw, 14px);
+  max-width:760px; margin:0 auto;
+}
+@media(min-width:480px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+@media(min-width:768px){ .grid{ grid-template-columns:repeat(4,1fr); } }
+
+.cat-card {
+  background:var(--white); border:2px solid var(--g6); border-radius:16px;
+  padding:clamp(14px, 3vw, 20px) clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 16px);
+  display:flex; flex-direction:column;
+  align-items:center; gap:8px; cursor:pointer;
+  transition:all .22s ease;
+  box-shadow:0 2px 10px rgba(15,61,34,.08);
+  user-select:none;
+}
+.cat-card:active,.cat-card:hover {
+  background:var(--g1); border-color:var(--g1);
+  transform:translateY(-3px); box-shadow:0 8px 24px rgba(15,61,34,.22);
+}
+.cat-card:active .cat-label,.cat-card:hover .cat-label { color:var(--white); }
+.cat-card:active .cat-qty,.cat-card:hover .cat-qty { color:var(--g5); }
+.cat-emoji { font-size:clamp(1.6rem, 5vw, 2.2rem); line-height:1; }
+.cat-label {
+  font-size:clamp(.65rem, 1.8vw, .74rem);
+  font-weight:800; color:var(--g1); text-align:center;
+  text-transform:uppercase; letter-spacing:.3px; line-height:1.3; transition:color .22s;
+}
+.cat-qty {
+  font-size:clamp(.6rem, 1.6vw, .66rem);
+  color:var(--g4); font-weight:600; transition:color .22s;
+}
+
+/* ── CATEGORY PAGE ── */
+.cat-page { background:var(--cream); }
+.cat-page-header {
+  background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 100%);
+  padding: clamp(10px, 2.5vw, 16px) clamp(12px, 3vw, 18px);
+  display:flex; align-items:center; gap:12px;
+  flex-shrink:0; position:relative; overflow:hidden; z-index:10;
+}
+.cat-page-header::after {
+  content:''; position:absolute; right:-20px; top:-20px;
+  width:100px; height:100px; background:rgba(255,255,255,.05);
+  border-radius:50%; pointer-events:none;
+}
+.back-btn {
+  background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.35);
+  color:white; min-width:44px; height:44px; border-radius:12px; cursor:pointer;
+  font-size:1.2rem; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .2s; font-family:'Nunito',sans-serif;
+  font-weight:800; padding:0 12px; gap:4px;
+}
+.back-btn:active,.back-btn:hover { background:rgba(255,255,255,.3); }
+.header-icon { font-size:clamp(1.4rem, 4vw, 1.9rem); flex-shrink:0; }
+.header-info { flex:1; min-width:0; }
+.header-cat-small {
+  font-size:.6rem; color:var(--g5);
+  text-transform:uppercase; letter-spacing:2px; font-weight:700;
+}
+.header-cat-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.9rem,3.5vw,1.35rem);
+  color:white; font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.cat-page-body { flex:1; padding:clamp(12px, 3vw, 18px) clamp(12px, 3vw, 16px) 40px; }
+
+/* NOTA */
+.note {
+  background:#fffbeb; border-left:4px solid var(--gold); border-radius:10px;
+  padding:10px 14px; font-size:.78rem; color:#7a5a1a; font-style:italic;
+  margin-bottom:16px; line-height:1.5;
+}
+
+/* SUB TITULO */
+.sub-title {
+  font-family:'Playfair Display',serif; font-size:.9rem; color:var(--g2); font-weight:700;
+  margin:18px 0 10px; display:flex; align-items:center; gap:6px;
+  padding-bottom:6px; border-bottom:2px dashed var(--g6);
+}
+.sub-title:first-child { margin-top:4px; }
+
+/* PRODUTOS */
+.prod-list { display:flex; flex-direction:column; gap:8px; }
+.prod-item {
+  background:white; border:1.5px solid var(--g6); border-radius:12px;
+  padding:clamp(10px, 2.5vw, 14px) clamp(12px, 3vw, 16px);
+  display:flex; align-items:center;
+  justify-content:space-between; gap:10px;
+  transition:border-color .18s,background .18s;
+}
+.prod-item:active { background:var(--g7); border-color:var(--g4); }
+.prod-name {
+  font-size:clamp(.78rem, 2.2vw, .84rem);
+  color:var(--text); font-weight:600; line-height:1.4; flex:1;
+}
+.prod-price {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.78rem, 2.2vw, .84rem);
+  color:var(--g3); font-weight:700; white-space:nowrap;
+  background:var(--g6); padding:4px 10px; border-radius:20px; flex-shrink:0;
+}
+
+/* Botão voltar ao banner na home */
+.home-footer {
+  display:flex; justify-content:center;
+  padding:0 16px clamp(24px, 5vw, 36px);
+}
+.btn-voltar-banner {
+  background:transparent; border:1.5px solid var(--g4);
+  color:var(--g2); border-radius:12px;
+  padding:10px 24px; font-family:'Nunito',sans-serif;
+  font-size:.82rem; font-weight:700;
+  cursor:pointer; letter-spacing:.3px;
+  display:flex; align-items:center; gap:6px;
+  transition:all .2s;
+}
+.btn-voltar-banner:hover,.btn-voltar-banner:active {
+  background:var(--g6); border-color:var(--g3);
+}
+
+/* ── RESPONSIVO DESKTOP ── */
+@media(min-width:768px){
+  #banner { padding: 32px 24px 90px; }
+  .banner-contatos { gap: 16px; }
+  .banner-contato { flex: 0 0 auto; }
+  .btn-catalogo { max-width: 360px; }
+}
+@media(min-width:1024px){
+  .banner-inner { max-width: 640px; }
+  .banner-nome-cris { letter-spacing: 18px; }
+}
+
+/* ══════════════════════════════════════
+   ADMIN PANEL STYLES
+══════════════════════════════════════ */
+
+/* Botão flutuante de admin */
+#admin-fab {
+  position: fixed;
+  bottom: 22px; right: 18px;
+  z-index: 9999;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f3d22, #2e7d52);
+  border: 2px solid rgba(201,168,76,.5);
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+#admin-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(0,0,0,.4); }
+
+/* Overlay */
+.adm-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 10000;
+  align-items: center; justify-content: center;
+}
+.adm-overlay.open { display: flex; }
+#adm-confirm-overlay { z-index: 10100; background: rgba(0,0,0,.45); }
+
+/* Modal genérico */
+.adm-modal {
+  background: #fff;
+  border-radius: 18px;
+  width: min(94vw, 440px);
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0,0,0,.35);
+  display: flex; flex-direction: column;
+}
+.adm-modal-header {
+  background: linear-gradient(135deg, #0f3d22, #2e7d52);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 18px 18px 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.adm-modal-header h2 { font-size: 1rem; font-weight: 800; font-family:'Nunito',sans-serif; }
+.adm-close {
+  background: rgba(255,255,255,.2); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+}
+.adm-close:hover { background: rgba(255,255,255,.35); }
+.adm-body { padding: 20px; flex: 1; }
+
+/* Inputs */
+.adm-field { margin-bottom: 14px; }
+.adm-field label { display: block; font-size: .75rem; font-weight: 700; color: #0f3d22; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px; }
+.adm-field input, .adm-field select, .adm-field textarea {
+  width: 100%; padding: 10px 13px;
+  border: 1.5px solid #d8f3dc; border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: .88rem; color: #0f2d18;
+  background: #f8fef9; outline: none; transition: border-color .2s;
+}
+.adm-field input:focus, .adm-field select:focus { border-color: #52b788; background: white; }
+
+/* Botões do modal */
+.adm-btn {
+  padding: 11px 20px; border: none; border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: .85rem; font-weight: 800;
+  cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.adm-btn-primary { background: linear-gradient(135deg, #c9a84c, #e0b84e); color: #0f2d18; }
+.adm-btn-primary:hover { filter: brightness(1.08); }
+.adm-btn-danger { background: #fee2e2; color: #b91c1c; }
+.adm-btn-danger:hover { background: #fca5a5; }
+.adm-btn-ghost { background: #f0faf2; color: #0f3d22; border: 1.5px solid #d8f3dc; }
+.adm-btn-ghost:hover { background: #d8f3dc; }
+.adm-btn-green { background: linear-gradient(135deg,#0f3d22,#2e7d52); color: white; }
+.adm-btn-green:hover { filter: brightness(1.1); }
+.adm-btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.adm-btn-full { width: 100%; justify-content: center; }
+
+/* Lista de items no painel */
+.adm-list { display: flex; flex-direction: column; gap: 8px; }
+.adm-item {
+  background: #f8fef9; border: 1.5px solid #d8f3dc; border-radius: 11px;
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+}
+.adm-item-info { flex: 1; min-width: 0; }
+.adm-item-name { font-size: .84rem; font-weight: 700; color: #0f2d18; }
+.adm-item-price { font-size: .75rem; color: #2e7d52; font-weight: 600; }
+.adm-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.adm-icon-btn {
+  width: 32px; height: 32px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: .85rem; display: flex; align-items: center; justify-content: center;
+  transition: all .18s;
+}
+.adm-icon-btn.edit { background: #f0faf2; color: #0f3d22; }
+.adm-icon-btn.edit:hover { background: #d8f3dc; }
+.adm-icon-btn.del { background: #fee2e2; color: #b91c1c; }
+.adm-icon-btn.del:hover { background: #fca5a5; }
+
+/* Tabs do painel admin */
+.adm-tabs { display: flex; gap: 6px; margin-bottom: 18px; }
+.adm-tab {
+  flex: 1; padding: 8px; border: 1.5px solid #d8f3dc; border-radius: 10px;
+  background: #f8fef9; font-family: 'Nunito', sans-serif; font-size: .75rem;
+  font-weight: 800; color: #0f3d22; cursor: pointer; text-align: center;
+  transition: all .2s;
+}
+.adm-tab.active { background: #0f3d22; color: white; border-color: #0f3d22; }
+
+/* Senha */
+.adm-pin { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+.adm-pin input {
+  width: 52px; height: 56px; border: 2px solid #d8f3dc; border-radius: 12px;
+  text-align: center; font-size: 1.4rem; font-weight: 800; color: #0f3d22;
+  background: #f8fef9; outline: none; transition: border-color .2s;
+}
+.adm-pin input:focus { border-color: #52b788; }
+.adm-error { color: #b91c1c; font-size: .8rem; text-align: center; margin-top: 8px; font-weight: 700; }
+
+/* Sub-section header */
+.adm-section-title {
+  font-size: .78rem; font-weight: 800; color: #52b788;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.adm-divider { height: 1px; background: #d8f3dc; margin: 16px 0; }
+
+/* Categoria item no admin */
+.adm-cat-item {
+  background: #f0faf2; border: 1.5px solid #d8f3dc; border-radius: 11px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: all .2s;
+}
+.adm-cat-item:hover { border-color: #52b788; background: #d8f3dc; }
+.adm-cat-emoji { font-size: 1.3rem; }
+.adm-cat-label { flex: 1; font-size: .85rem; font-weight: 700; color: #0f2d18; }
+.adm-cat-count { font-size: .72rem; color: #52b788; font-weight: 600; }
+
+/* Scrollable list */
+.adm-scrollable { max-height: 340px; overflow-y: auto; }
+.adm-scrollable::-webkit-scrollbar { width: 5px; }
+.adm-scrollable::-webkit-scrollbar-thumb { background: #95d5b2; border-radius: 10px; }
+
+/* Badge de admin ativo */
+#admin-fab.active { background: linear-gradient(135deg,#c9a84c,#e0b84e); border-color: rgba(15,61,34,.4); }
+#admin-fab .adm-dot {
+  position: absolute; top: -2px; right: -2px;
+  width: 12px; height: 12px; background: #c9a84c;
+  border-radius: 50%; border: 2px solid white; display: none;
+}
+#admin-fab.active .adm-dot { display: block; background: #22c55e; }
+
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ═══════════ BANNER ═══════════ -->
+<div id="banner" class="page visible">
+  <div class="banner-frame"></div>
+  <div class="banner-leaf bl-tl">🌿</div>
+  <div class="banner-leaf bl-tr">🌿</div>
+  <div class="banner-leaf bl-bl">🌱</div>
+  <div class="banner-leaf bl-br">🌱</div>
+
+  <div class="banner-inner">
+
+    <div class="banner-sub">Queijos, farinhas, temperos e outros!!</div>
+
+    <div class="banner-logo">
+      <span class="banner-nome-cris">Cris</span>
+      <span class="banner-nome-temperos">Temperos</span>
+    </div>
+
+    <div class="banner-divisor"><span class="banner-star">✦</span></div>
+
+    <div class="banner-selos">
+      <div class="banner-selo">🤲 100% Artesanal</div>
+      <div class="banner-selo">🏪 Banca Licenciada</div>
+    </div>
+
+    <div class="banner-contatos">
+      <a class="banner-contato" href="https://wa.me/5534996408672" target="_blank" rel="noopener">
+        <div class="banner-icone b-wpp">💬</div>
+        <div class="banner-cinfo">
+          <span class="banner-clabel">WhatsApp</span>
+          <span class="banner-cvalor">(34) 99640-8672</span>
+        </div>
+      </a>
+      <a class="banner-contato" href="https://instagram.com/cristina_temperos" target="_blank" rel="noopener">
+        <div class="banner-icone b-insta">📸</div>
+        <div class="banner-cinfo">
+          <span class="banner-clabel">Instagram</span>
+          <span class="banner-cvalor">@cristina_temperos</span>
+        </div>
+      </a>
+    </div>
+
+    <button class="btn-catalogo" id="btn-ver-catalogo">🧺 Ver Catálogo Completo</button>
+
+  </div>
+
+  <div class="banner-rodape">
+    <div class="banner-rodape-principal">✦ Consulte disponibilidade e valores no atacado! ✦</div>
+    <div class="banner-rodape-entrega">🛵 Fazemos entregas!</div>
+  </div>
+</div>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div id="home" class="page">
+  <div class="home-header">
+    <span class="badge">✦ Cris Temperos ✦</span>
+    <h1 class="home-title">Catálogo de <em>Produtos</em></h1>
+    <p class="home-sub">🧺 Produtos frescos e caseiros 🧺</p>
+  </div>
+  <div class="grid-wrap">
+    <div class="grid">
+      <div class="cat-card" onclick="show('alhos')"><span class="cat-emoji">🧄</span><span class="cat-label">Alhos &amp; Temperos</span><span class="cat-qty">8 produtos</span></div>
+      <div class="cat-card" onclick="show('amendoins')"><span class="cat-emoji">🥜</span><span class="cat-label">Amendoins &amp; Castanhas</span><span class="cat-qty">11 produtos</span></div>
+      <div class="cat-card" onclick="show('bananadas')"><span class="cat-emoji">🍌</span><span class="cat-label">Bananadas &amp; Goiabadas</span><span class="cat-qty">7 produtos</span></div>
+      <div class="cat-card" onclick="show('doces')"><span class="cat-emoji">🍮</span><span class="cat-label">Doces Caseiros</span><span class="cat-qty">8 produtos</span></div>
+      <div class="cat-card" onclick="show('frango')"><span class="cat-emoji">🍗</span><span class="cat-label">Frango</span><span class="cat-qty">1 produto</span></div>
+      <div class="cat-card" onclick="show('graos')"><span class="cat-emoji">🌾</span><span class="cat-label">Grãos &amp; Farinhas</span><span class="cat-qty">13 produtos</span></div>
+      <div class="cat-card" onclick="show('meis')"><span class="cat-emoji">🍯</span><span class="cat-label">Méis &amp; Derivados</span><span class="cat-qty">6 produtos</span></div>
+      <div class="cat-card" onclick="show('ovos')"><span class="cat-emoji">🥚</span><span class="cat-label">Ovos Caipiras</span><span class="cat-qty">2 tipos</span></div>
+      <div class="cat-card" onclick="show('pimentas')"><span class="cat-emoji">🌶</span><span class="cat-label">Pimentas &amp; Molhos</span><span class="cat-qty">17 produtos</span></div>
+      <div class="cat-card" onclick="show('queijos')"><span class="cat-emoji">🧀</span><span class="cat-label">Queijos &amp; Laticínios</span><span class="cat-qty">6 produtos</span></div>
+      <div class="cat-card" onclick="show('rapaduras')"><span class="cat-emoji">🌽</span><span class="cat-label">Rapaduras &amp; Farinhas Regionais</span><span class="cat-qty">7 produtos</span></div>
+      <div class="cat-card" onclick="show('especiarias')"><span class="cat-emoji">🌿</span><span class="cat-label">Especiarias &amp; Ervas</span><span class="cat-qty">40 produtos</span></div>
+      <div class="cat-card" onclick="show('chas')"><span class="cat-emoji">🍵</span><span class="cat-label">Chás</span><span class="cat-qty">8 produtos</span></div>
+    </div>
+  </div>
+  <div class="home-footer">
+    <button class="btn-voltar-banner" id="btn-voltar-banner">← Voltar ao início</button>
+  </div>
+</div>
+
+<!-- ═══════════ CATEGORIAS ═══════════ -->
+
+<!-- ALHOS -->
+<div id="alhos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-alhos">← Voltar</button>
+    <span class="header-icon">🧄</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Alhos e Temperos</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Alho cabeça (4 un)</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho descascado</span><span class="prod-price">R$ 50,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Alho triturado</span><span class="prod-price">R$ 50,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Sal com limão 150g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sal do Himalaia grosso 250g</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sal do Himalaia fino 250g</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sal de cozinha 250g</span><span class="prod-price">R$ 2,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero caseiro (copo)</span><span class="prod-price">R$ 7,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- AMENDOINS -->
+<div id="amendoins" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-amendoins">← Voltar</button>
+    <span class="header-icon">🥜</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Amendoins, Castanhas e Derivados</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🥜 Amendoins</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Amendoim com açúcar 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim com cacau 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim japonês 210g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim limpo e torrado 250g</span><span class="prod-price">R$ 9,00</span></div>
+      <div class="prod-item"><span class="prod-name">Amendoim limpo e torrado C/S 500g</span><span class="prod-price">R$ 18,00</span></div>
+    </div>
+    <div class="sub-title">🌰 Castanhas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Castanha de caju C/S 160g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Castanha de caju S/S 160g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Castanha do Pará 130g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mix de castanhas 160g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+    <div class="sub-title">🍬 Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Paçoca 370g</span><span class="prod-price">R$ 14,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pé de moleque 300g</span><span class="prod-price">R$ 15,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANANADAS -->
+<div id="bananadas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-bananadas">← Voltar</button>
+    <span class="header-icon">🍌</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Bananadas e Goiabadas</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍌 Bananadas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Bananada de colher 500g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bananinha caseira 300g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bananinha zero açúcar (10 un)</span><span class="prod-price">R$ 16,00</span></div>
+    </div>
+    <div class="sub-title">🍈 Goiabadas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 200g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 400g</span><span class="prod-price">R$ 16,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada cascão 700g</span><span class="prod-price">R$ 22,00</span></div>
+      <div class="prod-item"><span class="prod-name">Goiabada de colher 500g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCES -->
+<div id="doces" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-doces">← Voltar</button>
+    <span class="header-icon">🍮</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Doces Caseiros</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍬 Balinhas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Balinha de coco 250g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Balinha fini pote 150g</span><span class="prod-price">R$ 15,00</span></div>
+    </div>
+    <div class="sub-title">🥛 Doce de Leite</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Doce de leite com mamão 300g</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de leite em pedacinhos 255g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de leite pastoso 450g</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Doce de queijo 300g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pingo de leite 225g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pingo de leite cristalizado 400g</span><span class="prod-price">R$ 18,00</span></div>
+    </div>
+    <div class="sub-title">🫙 Geleias</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Geleia de mocotó 800g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Geleia tradicional 350g</span><span class="prod-price">R$ 14,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FRANGO -->
+<div id="frango" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-frango">← Voltar</button>
+    <span class="header-icon">🍗</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Frango</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Frango inteiro semi caipira</span><span class="prod-price">R$ 55,00</span></div>
+    </div>
+    <div class="note" style="margin-top:14px">🐓 Criado de forma semi-caipira — mais sabor e qualidade para a sua mesa!</div>
+  </div>
+</div>
+
+<!-- GRAOS -->
+<div id="graos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-graos">← Voltar</button>
+    <span class="header-icon">🌾</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Grãos, Farinhas e Cereais</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🥣 Cereais e Sementes</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Ameixas 150g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Aveia flocos 250g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chia 160g</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Granola 180g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Milho de pipoca 250g</span><span class="prod-price">R$ 6,00</span></div>
+      <div class="prod-item"><span class="prod-name">Uvas passas 150g</span><span class="prod-price">R$ 10,00</span></div>
+    </div>
+    <div class="sub-title">🌽 Farinhas e Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Creme de milho 500g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de aveia 200g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de puba 1kg</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha de rosca 250g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Fubá 500g</span><span class="prod-price">R$ 7,00</span></div>
+      <div class="prod-item"><span class="prod-name">Massa de tapioca 500g</span><span class="prod-price">R$ 10,00</span></div>
+      <div class="prod-item"><span class="prod-name">Polvilho doce 1kg</span><span class="prod-price">R$ 16,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MEIS -->
+<div id="meis" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-meis">← Voltar</button>
+    <span class="header-icon">🍯</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Méis e Derivados</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🍯 Mel Silvestre</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Mel silvestre 280g</span><span class="prod-price">R$ 24,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mel silvestre 500g</span><span class="prod-price">R$ 35,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mel silvestre 1kg</span><span class="prod-price">R$ 60,00</span></div>
+      <div class="prod-item"><span class="prod-name">Favo de mel 340g</span><span class="prod-price">R$ 30,00</span></div>
+    </div>
+    <div class="sub-title">🌿 Outros Derivados</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Própolis branco 20ml</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Xarope de mel 450g</span><span class="prod-price">R$ 24,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- OVOS -->
+<div id="ovos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-ovos">← Voltar</button>
+    <span class="header-icon">🥚</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Ovos Caipiras e Semi</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Jumbo semi caipira — 30 ovos</span><span class="prod-price">R$ 34,00</span></div>
+      <div class="prod-item"><span class="prod-name">Extra semi caipira — 30 ovos</span><span class="prod-price">R$ 32,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIMENTAS -->
+<div id="pimentas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-pimentas">← Voltar</button>
+    <span class="header-icon">🌶</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Pimentas e Molhos</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🫙 Molhos</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Molho pimenta dedo de moça 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Molho pimenta malagueta 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta malagueta no óleo 200ml</span><span class="prod-price">R$ 15,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta malagueta no óleo 350g</span><span class="prod-price">R$ 30,00</span></div>
+    </div>
+    <div class="sub-title">🌶 Pimentas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Pimenta arriba saia 350g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta biquinho 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta bode 200ml</span><span class="prod-price">R$ 12,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta bode 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Carolina Reaper 350g</span><span class="prod-price">R$ 40,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta cumari vermelha 350g</span><span class="prod-price">R$ 35,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta dedo de moça 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta roxa 175g</span><span class="prod-price">R$ 10,00</span></div>
+    </div>
+    <div class="sub-title">🫒 Conservas</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Conserva de jurubeba 340g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Conserva de pequi 500g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Creme de pequi 350g</span><span class="prod-price">R$ 20,00</span></div>
+      <div class="prod-item"><span class="prod-name">Jiló baby no vinagre 500g</span><span class="prod-price">R$ 25,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tiras de pequi 350g</span><span class="prod-price">R$ 20,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUEIJOS -->
+<div id="queijos" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-queijos">← Voltar</button>
+    <span class="header-icon">🧀</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Queijos e Laticínios</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Manteiga de leite 250ml</span><span class="prod-price">R$ 18,00</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo fresco</span><span class="prod-price">R$ 35,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo meia cura</span><span class="prod-price">R$ 49,90/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo ralado 500g</span><span class="prod-price">R$ 29,99</span></div>
+      <div class="prod-item"><span class="prod-name">Queijo trança</span><span class="prod-price">R$ 90,00/kg</span></div>
+      <div class="prod-item"><span class="prod-name">Requeijão caipira 300g</span><span class="prod-price">R$ 29,99</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- RAPADURAS -->
+<div id="rapaduras" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-rapaduras">← Voltar</button>
+    <span class="header-icon">🌽</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Rapaduras e Farinhas Regionais</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="sub-title">🌾 Farinhas Regionais</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Farinha biju mandioca</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha biju milho</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha goiana mandioca</span><span class="prod-price">R$ 12,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha temperada ao alho 500g</span><span class="prod-price">R$ 14,00/pct</span></div>
+      <div class="prod-item"><span class="prod-name">Farinha temperada sabor costela</span><span class="prod-price">R$ 28,00/kg</span></div>
+    </div>
+    <div class="sub-title">🍬 Rapaduras</div>
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Rapadura Salinas 1kg</span><span class="prod-price">R$ 16,00</span></div>
+      <div class="prod-item"><span class="prod-name">Rapadura Salinas 1,5kg</span><span class="prod-price">R$ 35,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ESPECIARIAS -->
+<div id="especiarias" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-especiarias">← Voltar</button>
+    <span class="header-icon">🌿</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Especiarias e Ervas</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Açafrão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho desidratado</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho frito</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Ana Maria</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bacon</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bife acebolado</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Caldo de galinha</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Carne de vaca</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Carne gourmet</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cebola Crispi (copinho dosador)</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cheiro verde</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chimichurri</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Chimi-Limão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Colorau</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cominho</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Costela</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Curry</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Edu Guedes</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Lemon pepper</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Mais Alho</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Orégano</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica defumada</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica doce</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Páprica picante</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pega Esposa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pega Marido</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Calabresa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta Rosa</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Pimenta-do-reino</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Salada gourmet</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Sertanejo</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero baiano</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero de Feijão</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempera Tudo</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tempero do Chefe</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Tomilho</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Vinagrete (copinho dosador)</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Vinagre gourmet (copinho dosador)</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Alho laminado (copinho dosador)</span><span class="prod-price">R$ 4,00</span></div>
+      <div class="prod-item"><span class="prod-name">Bacon em pó 100g</span><span class="prod-price">R$ 18,00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHÁS -->
+<div id="chas" class="page cat-page">
+  <div class="cat-page-header">
+    <button class="back-btn" id="back-chas">← Voltar</button>
+    <span class="header-icon">🍵</span>
+    <div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">Chás</div></div>
+  </div>
+  <div class="cat-page-body">
+    <div class="prod-list">
+      <div class="prod-item"><span class="prod-name">Alecrim</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Camomila</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Canela em pó</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Cravo-da-índia</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Erva-doce</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Folha de Louro</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Hibisco</span><span class="prod-price">R$ 5,00</span></div>
+      <div class="prod-item"><span class="prod-name">Noz-moscada</span><span class="prod-price">R$ 5,00</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+  var current = 'banner';
+  var cats = ['alhos','amendoins','bananadas','doces','frango','graos','meis','ovos','pimentas','queijos','rapaduras','especiarias','chas']; // será sobrescrito por renderSite()
+
+  function show(id) {
+    if (id === current) return;
+    var fromEl = document.getElementById(current);
+    var toEl   = document.getElementById(id);
+
+    // Página de destino entra da direita
+    toEl.style.transition = 'none';
+    toEl.style.transform  = 'translateX(100%)';
+    toEl.classList.add('visible');
+    toEl.scrollTop = 0;
+
+    // Força reflow para aplicar posição inicial antes de animar
+    toEl.offsetHeight;
+
+    toEl.style.transition = '';
+    toEl.style.transform  = '';
+
+    // Página atual sai para a esquerda
+    fromEl.classList.add('leaving');
+    fromEl.classList.remove('visible');
+
+    fromEl.addEventListener('transitionend', function cleanup() {
+      fromEl.removeEventListener('transitionend', cleanup);
+      fromEl.classList.remove('leaving');
+      fromEl.style.transform = 'translateX(100%)';
+    });
+
+    current = id;
+  }
+
+  function back() { showBack('home'); }
+
+  function showBack(id) {
+    if (id === current) return;
+    var fromEl = document.getElementById(current);
+    var toEl   = document.getElementById(id);
+
+    // Página de destino entra da ESQUERDA (voltar)
+    toEl.style.transition = 'none';
+    toEl.style.transform  = 'translateX(-40%)';
+    toEl.classList.add('visible');
+    toEl.scrollTop = 0;
+
+    toEl.offsetHeight;
+
+    toEl.style.transition = '';
+    toEl.style.transform  = '';
+
+    // Página atual sai para a direita
+    fromEl.style.transition = fromEl.style.transition || '';
+    fromEl.classList.remove('visible');
+    fromEl.style.transform = 'translateX(100%)';
+
+    fromEl.addEventListener('transitionend', function cleanup() {
+      fromEl.removeEventListener('transitionend', cleanup);
+      fromEl.style.transform = 'translateX(100%)';
+    });
+
+    current = id;
+  }
+
+  document.getElementById('btn-ver-catalogo').addEventListener('click', function(e) {
+    e.preventDefault(); show('home');
+  });
+  document.getElementById('btn-voltar-banner').addEventListener('click', function(e) {
+    e.preventDefault(); showBack('banner');
+  });
+
+  // Carregar cache local ANTES de bindar os botões de voltar (JSONBin carrega depois)
+  (function() {
+    var saved = null;
+    try { saved = localStorage.getItem('cris_catalog_cache'); } catch(e) {}
+    if (!saved) {
+      try {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var c = cookies[i].trim();
+          if (c.indexOf('cris_catalog_cache=') === 0) { saved = decodeURIComponent(c.substring('cris_catalog_cache='.length)); break; }
+        }
+      } catch(e) {}
+    }
+    if (saved) {
+      try {
+        var parsed = JSON.parse(saved);
+        // Injeta produtos salvos nas páginas existentes
+        Object.keys(parsed).forEach(function(id) {
+          var cat = parsed[id];
+          var page = document.getElementById(id);
+          if (page) {
+            var prodList = page.querySelector('.prod-list');
+            if (prodList) {
+              prodList.innerHTML = cat.products.map(function(p) {
+                return '<div class="prod-item"><span class="prod-name">' + p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span><span class="prod-price">' + p.price.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
+              }).join('');
+            }
+            // Atualiza header da categoria
+            var headerTitle = page.querySelector('.header-cat-title');
+            if (headerTitle) headerTitle.textContent = cat.label;
+            var headerIcon = page.querySelector('.header-icon');
+            if (headerIcon) headerIcon.textContent = cat.emoji;
+          }
+        });
+        // Atualiza grid do home
+        var grid = document.querySelector('#home .grid');
+        if (grid) {
+          grid.innerHTML = '';
+          Object.keys(parsed).forEach(function(id) {
+            var cat = parsed[id];
+            var n = cat.products.length;
+            var label = n === 1 ? '1 produto' : n + ' produtos';
+            var card = document.createElement('div');
+            card.className = 'cat-card';
+            card.setAttribute('onclick', "show('" + id + "')");
+            card.innerHTML = '<span class="cat-emoji">' + cat.emoji + '</span><span class="cat-label">' + cat.label + '</span><span class="cat-qty">' + label + '</span>';
+            grid.appendChild(card);
+          });
+        }
+        // Atualiza lista de cats
+        cats = Object.keys(parsed);
+      } catch(e) { console.warn('Erro ao carregar dados salvos:', e); }
+    }
+  })();
+
+  cats.forEach(function(id) {
+    var btn = document.getElementById('back-' + id);
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation(); back();
+      });
+    }
+  });
+</script>
+
+<!-- ══════════ MODAL CONFIRMAÇÃO ══════════ -->
+<div class="adm-overlay" id="adm-confirm-overlay">
+  <div class="adm-modal" style="max-width:320px">
+    <div class="adm-modal-header" style="background:linear-gradient(135deg,#7f1d1d,#b91c1c)">
+      <h2 id="adm-confirm-title">⚠️ Confirmar exclusão</h2>
+      <button class="adm-close" onclick="confirmResolve(false)">✕</button>
+    </div>
+    <div class="adm-body">
+      <p id="adm-confirm-msg" style="font-size:.88rem;color:#0f2d18;margin-bottom:20px;line-height:1.5"></p>
+      <div class="adm-btn-row">
+        <button class="adm-btn adm-btn-danger" style="flex:1" onclick="confirmResolve(true)">🗑️ Excluir</button>
+        <button class="adm-btn adm-btn-ghost" style="flex:1" onclick="confirmResolve(false)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN FAB ══════════ -->
+<button id="admin-fab" title="Painel Admin">
+  <span class="adm-dot"></span>
+  ⚙️
+</button>
+
+<!-- ══════════ OVERLAY LOGIN ══════════ -->
+<div class="adm-overlay" id="adm-login-overlay">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2>🔐 Acesso Administrativo</h2>
+      <button class="adm-close" onclick="closeLogin()">✕</button>
+    </div>
+    <div class="adm-body" style="text-align:center">
+      <p style="font-size:.85rem;color:#52b788;margin-bottom:16px;font-weight:600">Digite a senha de 4 dígitos</p>
+      <div class="adm-pin">
+        <input type="password" maxlength="1" id="pin0" oninput="pinInput(0)" onkeydown="pinKey(event,0)">
+        <input type="password" maxlength="1" id="pin1" oninput="pinInput(1)" onkeydown="pinKey(event,1)">
+        <input type="password" maxlength="1" id="pin2" oninput="pinInput(2)" onkeydown="pinKey(event,2)">
+        <input type="password" maxlength="1" id="pin3" oninput="pinInput(3)" onkeydown="pinKey(event,3)">
+      </div>
+      <div class="adm-error" id="pin-error" style="display:none">❌ Senha incorreta</div>
+      <button class="adm-btn adm-btn-green adm-btn-full" style="margin-top:16px" onclick="checkPin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OVERLAY PAINEL PRINCIPAL ══════════ -->
+<div class="adm-overlay" id="adm-panel-overlay">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2>⚙️ Painel Admin — Cris Temperos</h2>
+      <button class="adm-close" onclick="closePanel()">✕</button>
+    </div>
+    <div class="adm-body">
+      <div id="adm-sync-status" style="display:none;font-size:.75rem;font-weight:700;text-align:center;padding:6px 10px;background:#f0faf2;border-radius:8px;margin-bottom:12px;border:1px solid #d8f3dc;font-family:'Nunito',sans-serif;"></div>
+      <div class="adm-tabs">
+        <button class="adm-tab active" onclick="switchTab('produtos')">📦 Produtos</button>
+        <button class="adm-tab" onclick="switchTab('categorias')">📂 Categorias</button>
+      </div>
+
+      <!-- TAB PRODUTOS -->
+      <div id="adm-tab-produtos">
+        <div class="adm-section-title">📂 Selecione a Categoria</div>
+        <div class="adm-scrollable adm-list" id="adm-cat-list"></div>
+      </div>
+
+      <!-- TAB CATEGORIAS -->
+      <div id="adm-tab-categorias" style="display:none">
+        <div class="adm-section-title">📂 Categorias Existentes</div>
+        <div class="adm-scrollable adm-list" id="adm-catmgr-list" style="margin-bottom:16px"></div>
+        <div class="adm-divider"></div>
+        <div class="adm-section-title">➕ Nova Categoria</div>
+        <div class="adm-field"><label>Emoji</label><input type="text" id="new-cat-emoji" placeholder="🌟" maxlength="4"></div>
+        <div class="adm-field"><label>Nome da Categoria</label><input type="text" id="new-cat-name" placeholder="Ex: Molhos Artesanais"></div>
+        <div class="adm-field"><label>ID (sem espaços, letras minúsculas)</label><input type="text" id="new-cat-id" placeholder="Ex: molhos"></div>
+        <button class="adm-btn adm-btn-primary adm-btn-full" onclick="addCategory()">✚ Adicionar Categoria</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OVERLAY PRODUTOS DA CATEGORIA ══════════ -->
+<div class="adm-overlay" id="adm-prods-overlay">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2 id="adm-prods-title">Produtos</h2>
+      <button class="adm-close" onclick="closeProds()">✕</button>
+    </div>
+    <div class="adm-body">
+      <div class="adm-scrollable adm-list" id="adm-prods-list" style="margin-bottom:16px"></div>
+      <div class="adm-divider"></div>
+      <div class="adm-section-title">➕ Novo Produto</div>
+      <div class="adm-field"><label>Nome do Produto</label><input type="text" id="new-prod-name" placeholder="Ex: Alho descascado 200g"></div>
+      <div class="adm-field"><label>Preço</label><input type="text" id="new-prod-price" placeholder="Ex: R$ 12,00 ou R$ 50,00/kg"></div>
+      <button class="adm-btn adm-btn-primary adm-btn-full" onclick="addProduct()">✚ Adicionar Produto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OVERLAY EDITAR PRODUTO ══════════ -->
+<div class="adm-overlay" id="adm-edit-overlay">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2>✏️ Editar Produto</h2>
+      <button class="adm-close" onclick="closeEdit()">✕</button>
+    </div>
+    <div class="adm-body">
+      <div class="adm-field"><label>Nome do Produto</label><input type="text" id="edit-prod-name"></div>
+      <div class="adm-field"><label>Preço</label><input type="text" id="edit-prod-price"></div>
+      <div class="adm-btn-row">
+        <button class="adm-btn adm-btn-primary" style="flex:1" onclick="saveEdit()">💾 Salvar</button>
+        <button class="adm-btn adm-btn-ghost" onclick="closeEdit()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OVERLAY EDITAR CATEGORIA ══════════ -->
+<div class="adm-overlay" id="adm-editcat-overlay">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h2>✏️ Editar Categoria</h2>
+      <button class="adm-close" onclick="closeEditCat()">✕</button>
+    </div>
+    <div class="adm-body">
+      <div class="adm-field"><label>Emoji</label><input type="text" id="editcat-emoji" maxlength="4"></div>
+      <div class="adm-field"><label>Nome da Categoria</label><input type="text" id="editcat-name"></div>
+      <div class="adm-btn-row">
+        <button class="adm-btn adm-btn-primary" style="flex:1" onclick="saveEditCat()">💾 Salvar</button>
+        <button class="adm-btn adm-btn-ghost" onclick="closeEditCat()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  ADMIN — DADOS E LÓGICA
+// ══════════════════════════════════════
+
+var ADMIN_PIN = '5698'; // Mude a senha aqui!
+var adminLogged = false;
+var currentCatId = null;
+var editProdIdx = null;
+var editCatId = null;
+var currentTab = 'produtos';
+
+// ── Dados iniciais extraídos do HTML ──
+var catalogData = {
+  alhos: {
+    emoji: '🧄', label: 'Alhos e Temperos',
+    products: [
+      {name:'Alho cabeça (4 un)', price:'R$ 10,00'},
+      {name:'Alho descascado', price:'R$ 50,00/kg'},
+      {name:'Alho triturado', price:'R$ 50,00/kg'},
+      {name:'Sal com limão 150g', price:'R$ 10,00'},
+      {name:'Sal do Himalaia grosso 250g', price:'R$ 5,00'},
+      {name:'Sal do Himalaia fino 250g', price:'R$ 5,00'},
+      {name:'Sal de cozinha 250g', price:'R$ 2,00'},
+      {name:'Tempero caseiro (copo)', price:'R$ 7,00'}
+    ]
+  },
+  amendoins: {
+    emoji: '🥜', label: 'Amendoins, Castanhas e Derivados',
+    products: [
+      {name:'Amendoim com açúcar 210g', price:'R$ 10,00'},
+      {name:'Amendoim com cacau 210g', price:'R$ 10,00'},
+      {name:'Amendoim japonês 210g', price:'R$ 10,00'},
+      {name:'Amendoim limpo e torrado 250g', price:'R$ 9,00'},
+      {name:'Amendoim limpo e torrado C/S 500g', price:'R$ 18,00'},
+      {name:'Castanha de caju C/S 160g', price:'R$ 20,00'},
+      {name:'Castanha de caju S/S 160g', price:'R$ 20,00'},
+      {name:'Castanha do Pará 130g', price:'R$ 25,00'},
+      {name:'Mix de castanhas 160g', price:'R$ 20,00'},
+      {name:'Paçoca 370g', price:'R$ 14,00'},
+      {name:'Pé de moleque 300g', price:'R$ 15,00'}
+    ]
+  },
+  bananadas: {
+    emoji: '🍌', label: 'Bananadas e Goiabadas',
+    products: [
+      {name:'Bananada de colher 500g', price:'R$ 20,00'},
+      {name:'Bananinha caseira 300g', price:'R$ 15,00'},
+      {name:'Bananinha zero açúcar (10 un)', price:'R$ 16,00'},
+      {name:'Goiabada cascão 200g', price:'R$ 10,00'},
+      {name:'Goiabada cascão 400g', price:'R$ 16,00'},
+      {name:'Goiabada cascão 700g', price:'R$ 22,00'},
+      {name:'Goiabada de colher 500g', price:'R$ 20,00'}
+    ]
+  },
+  doces: {
+    emoji: '🍮', label: 'Doces Caseiros',
+    products: [
+      {name:'Balinha de coco 250g', price:'R$ 15,00'},
+      {name:'Balinha fini pote 150g', price:'R$ 15,00'},
+      {name:'Doce de leite com mamão 300g', price:'R$ 18,00'},
+      {name:'Doce de leite em pedacinhos 255g', price:'R$ 15,00'},
+      {name:'Doce de leite pastoso 450g', price:'R$ 18,00'},
+      {name:'Doce de queijo 300g', price:'R$ 20,00'},
+      {name:'Pingo de leite 225g', price:'R$ 10,00'},
+      {name:'Pingo de leite cristalizado 400g', price:'R$ 18,00'},
+      {name:'Geleia de mocotó 800g', price:'R$ 15,00'},
+      {name:'Geleia tradicional 350g', price:'R$ 14,00'}
+    ]
+  },
+  frango: {
+    emoji: '🍗', label: 'Frango',
+    products: [
+      {name:'Frango inteiro semi caipira', price:'R$ 55,00'}
+    ]
+  },
+  graos: {
+    emoji: '🌾', label: 'Grãos, Farinhas e Cereais',
+    products: [
+      {name:'Ameixas 150g', price:'R$ 15,00'},
+      {name:'Aveia flocos 250g', price:'R$ 7,00'},
+      {name:'Chia 160g', price:'R$ 15,00'},
+      {name:'Granola 180g', price:'R$ 10,00'},
+      {name:'Milho de pipoca 250g', price:'R$ 6,00'},
+      {name:'Uvas passas 150g', price:'R$ 10,00'},
+      {name:'Creme de milho 500g', price:'R$ 7,00'},
+      {name:'Farinha de aveia 200g', price:'R$ 7,00'},
+      {name:'Farinha de puba 1kg', price:'R$ 20,00'},
+      {name:'Farinha de rosca 250g', price:'R$ 7,00'},
+      {name:'Fubá 500g', price:'R$ 7,00'},
+      {name:'Massa de tapioca 500g', price:'R$ 10,00'},
+      {name:'Polvilho doce 1kg', price:'R$ 16,00'}
+    ]
+  },
+  meis: {
+    emoji: '🍯', label: 'Méis e Derivados',
+    products: [
+      {name:'Mel silvestre 280g', price:'R$ 24,00'},
+      {name:'Mel silvestre 500g', price:'R$ 35,00'},
+      {name:'Mel silvestre 1kg', price:'R$ 60,00'},
+      {name:'Favo de mel 340g', price:'R$ 30,00'},
+      {name:'Própolis branco 20ml', price:'R$ 20,00'},
+      {name:'Xarope de mel 450g', price:'R$ 24,00'}
+    ]
+  },
+  ovos: {
+    emoji: '🥚', label: 'Ovos Caipiras e Semi',
+    products: [
+      {name:'Jumbo semi caipira — 30 ovos', price:'R$ 34,00'},
+      {name:'Extra semi caipira — 30 ovos', price:'R$ 32,00'}
+    ]
+  },
+  pimentas: {
+    emoji: '🌶', label: 'Pimentas e Molhos',
+    products: [
+      {name:'Molho pimenta dedo de moça 200ml', price:'R$ 15,00'},
+      {name:'Molho pimenta malagueta 200ml', price:'R$ 15,00'},
+      {name:'Pimenta malagueta no óleo 200ml', price:'R$ 15,00'},
+      {name:'Pimenta malagueta no óleo 350g', price:'R$ 30,00'},
+      {name:'Pimenta arriba saia 350g', price:'R$ 25,00'},
+      {name:'Pimenta biquinho 350g', price:'R$ 20,00'},
+      {name:'Pimenta bode 200ml', price:'R$ 12,00'},
+      {name:'Pimenta bode 350g', price:'R$ 20,00'},
+      {name:'Pimenta Carolina Reaper 350g', price:'R$ 40,00'},
+      {name:'Pimenta cumari vermelha 350g', price:'R$ 35,00'},
+      {name:'Pimenta dedo de moça 350g', price:'R$ 20,00'},
+      {name:'Pimenta roxa 175g', price:'R$ 10,00'},
+      {name:'Conserva de jurubeba 340g', price:'R$ 20,00'},
+      {name:'Conserva de pequi 500g', price:'R$ 25,00'},
+      {name:'Creme de pequi 350g', price:'R$ 20,00'},
+      {name:'Jiló baby no vinagre 500g', price:'R$ 25,00'},
+      {name:'Tiras de pequi 350g', price:'R$ 20,00'}
+    ]
+  },
+  queijos: {
+    emoji: '🧀', label: 'Queijos e Laticínios',
+    products: [
+      {name:'Manteiga de leite 250ml', price:'R$ 18,00'},
+      {name:'Queijo fresco', price:'R$ 35,00/kg'},
+      {name:'Queijo meia cura', price:'R$ 49,90/kg'},
+      {name:'Queijo ralado 500g', price:'R$ 29,99'},
+      {name:'Queijo trança', price:'R$ 90,00/kg'},
+      {name:'Requeijão caipira 300g', price:'R$ 29,99'}
+    ]
+  },
+  rapaduras: {
+    emoji: '🌽', label: 'Rapaduras e Farinhas Regionais',
+    products: [
+      {name:'Farinha biju mandioca', price:'R$ 12,00/pct'},
+      {name:'Farinha biju milho', price:'R$ 12,00/pct'},
+      {name:'Farinha goiana mandioca', price:'R$ 12,00/pct'},
+      {name:'Farinha temperada ao alho 500g', price:'R$ 14,00/pct'},
+      {name:'Farinha temperada sabor costela', price:'R$ 28,00/kg'},
+      {name:'Rapadura Salinas 1kg', price:'R$ 16,00'},
+      {name:'Rapadura Salinas 1,5kg', price:'R$ 35,00'}
+    ]
+  },
+  especiarias: {
+    emoji: '🌿', label: 'Especiarias e Ervas',
+    products: [
+      {name:'Açafrão', price:'R$ 4,00'},{name:'Alho desidratado', price:'R$ 4,00'},{name:'Alho frito', price:'R$ 4,00'},
+      {name:'Ana Maria', price:'R$ 4,00'},{name:'Bacon', price:'R$ 4,00'},{name:'Bife acebolado', price:'R$ 4,00'},
+      {name:'Caldo de galinha', price:'R$ 4,00'},{name:'Carne de vaca', price:'R$ 4,00'},{name:'Carne gourmet', price:'R$ 4,00'},
+      {name:'Cebola Crispi (copinho dosador)', price:'R$ 4,00'},{name:'Cheiro verde', price:'R$ 4,00'},{name:'Chimichurri', price:'R$ 4,00'},
+      {name:'Chimi-Limão', price:'R$ 4,00'},{name:'Colorau', price:'R$ 4,00'},{name:'Cominho', price:'R$ 4,00'},
+      {name:'Costela', price:'R$ 4,00'},{name:'Curry', price:'R$ 4,00'},{name:'Edu Guedes', price:'R$ 4,00'},
+      {name:'Lemon pepper', price:'R$ 4,00'},{name:'Mais Alho', price:'R$ 4,00'},{name:'Orégano', price:'R$ 4,00'},
+      {name:'Páprica defumada', price:'R$ 4,00'},{name:'Páprica doce', price:'R$ 4,00'},{name:'Páprica picante', price:'R$ 4,00'},
+      {name:'Pega Esposa', price:'R$ 4,00'},{name:'Pega Marido', price:'R$ 4,00'},{name:'Pimenta Calabresa', price:'R$ 4,00'},
+      {name:'Pimenta Rosa', price:'R$ 4,00'},{name:'Pimenta-do-reino', price:'R$ 4,00'},{name:'Salada gourmet', price:'R$ 4,00'},
+      {name:'Sertanejo', price:'R$ 4,00'},{name:'Tempero baiano', price:'R$ 4,00'},{name:'Tempero de Feijão', price:'R$ 4,00'},
+      {name:'Tempera Tudo', price:'R$ 4,00'},{name:'Tempero do Chefe', price:'R$ 4,00'},{name:'Tomilho', price:'R$ 4,00'},
+      {name:'Vinagrete (copinho dosador)', price:'R$ 4,00'},{name:'Vinagre gourmet (copinho dosador)', price:'R$ 4,00'},
+      {name:'Alho laminado (copinho dosador)', price:'R$ 4,00'},{name:'Bacon em pó 100g', price:'R$ 18,00'}
+    ]
+  },
+  chas: {
+    emoji: '🍵', label: 'Chás',
+    products: [
+      {name:'Alecrim', price:'R$ 5,00'},{name:'Camomila', price:'R$ 5,00'},{name:'Canela em pó', price:'R$ 5,00'},
+      {name:'Cravo-da-índia', price:'R$ 5,00'},{name:'Erva-doce', price:'R$ 5,00'},{name:'Folha de Louro', price:'R$ 5,00'},
+      {name:'Hibisco', price:'R$ 5,00'},{name:'Noz-moscada', price:'R$ 5,00'}
+    ]
+  }
+};
+
+// ── Storage: JSONBin.io (sincroniza entre dispositivos) ──
+var JSONBIN_KEY = '$2a$10$mekKBLGhyFwnxO99UaKqyeQatADOwzUnbudBXNol9/136JjOpykJG';
+var JSONBIN_BIN_ID = null; // será criado automaticamente na primeira vez
+
+function getBinId() {
+  try { return localStorage.getItem('cris_bin_id'); } catch(e) { return null; }
+}
+function setBinId(id) {
+  try { localStorage.setItem('cris_bin_id', id); } catch(e) {}
+  try {
+    var expires = new Date(); expires.setFullYear(expires.getFullYear() + 5);
+    document.cookie = 'cris_bin_id=' + id + '; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
+  } catch(e) {}
+}
+function getBinIdFallback() {
+  var id = getBinId();
+  if (id) return id;
+  try {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var c = cookies[i].trim();
+      if (c.indexOf('cris_bin_id=') === 0) return c.substring('cris_bin_id='.length);
+    }
+  } catch(e) {}
+  return null;
+}
+
+function showSyncStatus(msg, color) {
+  var el = document.getElementById('adm-sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || '#52b788';
+  el.style.display = 'block';
+}
+
+// ID fixo do bin — gerado uma vez e colado aqui para funcionar em qualquer dispositivo
+var JSONBIN_BIN_ID_FIXED = null; // será preenchido automaticamente na primeira execução
+
+function loadData(callback) {
+  var binId = JSONBIN_BIN_ID_FIXED || getBinIdFallback();
+  showSyncStatus('⏳ Carregando dados...', '#c9a84c');
+
+  if (!binId) {
+    // Primeira vez: cria o bin e salva o ID fixo
+    fetch('https://api.jsonbin.io/v3/b', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY,
+        'X-Bin-Name': 'cris-temperos',
+        'X-Bin-Private': 'true'
+      },
+      body: JSON.stringify(catalogData)
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      var id = data.metadata && data.metadata.id;
+      if (!id) throw new Error('ID não retornado');
+      JSONBIN_BIN_ID_FIXED = id;
+      setBinId(id);
+      // Mostrar o ID para o usuário copiar e fixar no código
+      showSyncStatus('✅ Bin criado! ID: ' + id, '#52b788');
+      console.log('JSONBIN BIN ID (guarde este):', id);
+      if (callback) callback();
+    })
+    .catch(function(e) {
+      console.error('Erro ao criar bin:', e);
+      showSyncStatus('⚠️ Erro de conexão com JSONBin', '#b91c1c');
+      if (callback) callback();
+    });
+  } else {
+    fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
+      headers: {
+        'X-Master-Key': JSONBIN_KEY,
+        'X-Bin-Meta': 'false'
+      }
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      var record = data.record || data;
+      if (record && typeof record === 'object' && Object.keys(record).length > 0) {
+        catalogData = record;
+        // Salvar localmente como cache
+        try { localStorage.setItem('cris_catalog_cache', JSON.stringify(record)); } catch(e) {}
+        showSyncStatus('✅ Sincronizado!', '#52b788');
+      } else {
+        throw new Error('Dados vazios');
+      }
+      setTimeout(function(){ var el = document.getElementById('adm-sync-status'); if(el) el.style.display='none'; }, 2000);
+      if (callback) callback();
+    })
+    .catch(function(e) {
+      console.error('Erro ao carregar:', e);
+      // Tenta cache local como fallback
+      try {
+        var cache = localStorage.getItem('cris_catalog_cache');
+        if (cache) { catalogData = JSON.parse(cache); showSyncStatus('⚠️ Offline — usando cache local', '#c9a84c'); }
+        else { showSyncStatus('⚠️ Sem conexão e sem cache', '#b91c1c'); }
+      } catch(e2) { showSyncStatus('⚠️ Sem conexão', '#b91c1c'); }
+      if (callback) callback();
+    });
+  }
+}
+
+function saveData() {
+  var binId = JSONBIN_BIN_ID_FIXED || getBinIdFallback();
+  renderSite();
+  if (!binId) {
+    showSyncStatus('⚠️ Bin ID não encontrado', '#b91c1c');
+    return;
+  }
+  showSyncStatus('💾 Salvando...', '#c9a84c');
+  fetch('https://api.jsonbin.io/v3/b/' + binId, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_KEY
+    },
+    body: JSON.stringify(catalogData)
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function() {
+    // Atualiza cache local também
+    try { localStorage.setItem('cris_catalog_cache', JSON.stringify(catalogData)); } catch(e) {}
+    showSyncStatus('✅ Salvo em todos os dispositivos!', '#52b788');
+    setTimeout(function(){ var el = document.getElementById('adm-sync-status'); if(el) el.style.display='none'; }, 2500);
+  })
+  .catch(function(e) {
+    console.error('Erro ao salvar:', e);
+    showSyncStatus('⚠️ Erro ao salvar — verifique a conexão', '#b91c1c');
+  });
+}
+
+// ── Renderiza o site com dados atuais ──
+function renderSite() {
+  var app = document.getElementById('app');
+  // Atualizar grid de categorias no home
+  var grid = app.querySelector('#home .grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  Object.keys(catalogData).forEach(function(id) {
+    var cat = catalogData[id];
+    var n = cat.products.length;
+    var label = n === 1 ? '1 produto' : n + ' produtos';
+    var card = document.createElement('div');
+    card.className = 'cat-card';
+    card.setAttribute('onclick', "show('" + id + "')");
+    card.innerHTML = '<span class="cat-emoji">' + cat.emoji + '</span><span class="cat-label">' + esc(cat.label) + '</span><span class="cat-qty">' + label + '</span>';
+    grid.appendChild(card);
+  });
+
+  // Atualizar cada página de categoria
+  Object.keys(catalogData).forEach(function(id) {
+    var cat = catalogData[id];
+    var page = document.getElementById(id);
+    if (!page) {
+      // Criar página nova
+      page = document.createElement('div');
+      page.id = id;
+      page.className = 'page cat-page';
+      app.appendChild(page);
+    }
+    page.innerHTML =
+      '<div class="cat-page-header">' +
+        '<button class="back-btn" id="back-' + id + '">← Voltar</button>' +
+        '<span class="header-icon">' + cat.emoji + '</span>' +
+        '<div class="header-info"><div class="header-cat-small">Categoria</div><div class="header-cat-title">' + esc(cat.label) + '</div></div>' +
+      '</div>' +
+      '<div class="cat-page-body">' +
+        '<div class="prod-list">' +
+        cat.products.map(function(p) {
+          return '<div class="prod-item"><span class="prod-name">' + esc(p.name) + '</span><span class="prod-price">' + esc(p.price) + '</span></div>';
+        }).join('') +
+        '</div>' +
+      '</div>';
+    // Rebind back button
+    var btn = document.getElementById('back-' + id);
+    if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); back(); });
+  });
+
+  // Atualizar cats array e rebindar botões de voltar
+  cats = Object.keys(catalogData);
+  cats.forEach(function(id) {
+    var btn = document.getElementById('back-' + id);
+    if (btn) {
+      btn.onclick = null;
+      btn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); back(); });
+    }
+  });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Autenticação ──
+document.getElementById('admin-fab').addEventListener('click', function() {
+  if (adminLogged) { openPanel(); }
+  else { openLogin(); }
+});
+
+function openLogin() {
+  clearPins();
+  document.getElementById('pin-error').style.display = 'none';
+  document.getElementById('adm-login-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('pin0').focus(); }, 100);
+}
+function closeLogin() { document.getElementById('adm-login-overlay').classList.remove('open'); }
+function clearPins() { [0,1,2,3].forEach(function(i){ document.getElementById('pin'+i).value=''; }); }
+
+function pinInput(idx) {
+  var val = document.getElementById('pin'+idx).value;
+  if (val && idx < 3) document.getElementById('pin'+(idx+1)).focus();
+}
+function pinKey(e, idx) {
+  if (e.key === 'Backspace' && !document.getElementById('pin'+idx).value && idx > 0) {
+    document.getElementById('pin'+(idx-1)).focus();
+  }
+  if (e.key === 'Enter') checkPin();
+}
+
+function checkPin() {
+  var pin = [0,1,2,3].map(function(i){ return document.getElementById('pin'+i).value; }).join('');
+  if (pin === ADMIN_PIN) {
+    adminLogged = true;
+    document.getElementById('admin-fab').classList.add('active');
+    closeLogin();
+    openPanel();
+  } else {
+    document.getElementById('pin-error').style.display = 'block';
+    clearPins();
+    document.getElementById('pin0').focus();
+  }
+}
+
+// ── Painel principal ──
+function openPanel() {
+  renderAdminPanel();
+  document.getElementById('adm-panel-overlay').classList.add('open');
+}
+function closePanel() {
+  document.getElementById('adm-panel-overlay').classList.remove('open');
+  // Pede senha novamente na próxima vez
+  adminLogged = false;
+  document.getElementById('admin-fab').classList.remove('active');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.adm-tab').forEach(function(t,i){ t.classList.toggle('active', i===(tab==='produtos'?0:1)); });
+  document.getElementById('adm-tab-produtos').style.display = tab==='produtos' ? '' : 'none';
+  document.getElementById('adm-tab-categorias').style.display = tab==='categorias' ? '' : 'none';
+  if (tab === 'categorias') renderCatManager();
+}
+
+function renderAdminPanel() {
+  var list = document.getElementById('adm-cat-list');
+  list.innerHTML = '';
+  Object.keys(catalogData).forEach(function(id) {
+    var cat = catalogData[id];
+    var item = document.createElement('div');
+    item.className = 'adm-cat-item';
+    item.innerHTML = '<span class="adm-cat-emoji">' + cat.emoji + '</span>' +
+      '<span class="adm-cat-label">' + esc(cat.label) + '</span>' +
+      '<span class="adm-cat-count">' + cat.products.length + ' itens</span>';
+    var capturedId = id;
+    item.addEventListener('click', function(){ openProds(capturedId); });
+    list.appendChild(item);
+  });
+}
+
+// ── Produtos ──
+function openProds(catId) {
+  currentCatId = catId;
+  var cat = catalogData[catId];
+  document.getElementById('adm-prods-title').textContent = cat.emoji + ' ' + cat.label;
+  document.getElementById('new-prod-name').value = '';
+  document.getElementById('new-prod-price').value = '';
+  renderProdList();
+  document.getElementById('adm-prods-overlay').classList.add('open');
+}
+function closeProds() {
+  document.getElementById('adm-prods-overlay').classList.remove('open');
+  renderAdminPanel();
+}
+
+function renderProdList() {
+  var list = document.getElementById('adm-prods-list');
+  list.innerHTML = '';
+  var prods = catalogData[currentCatId].products;
+  if (prods.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:#95d5b2;font-size:.82rem;padding:12px">Nenhum produto nesta categoria</p>';
+    return;
+  }
+  prods.forEach(function(p, idx) {
+    var item = document.createElement('div');
+    item.className = 'adm-item';
+    item.innerHTML =
+      '<div class="adm-item-info"><div class="adm-item-name">' + esc(p.name) + '</div><div class="adm-item-price">' + esc(p.price) + '</div></div>' +
+      '<div class="adm-item-actions">' +
+        '<button class="adm-icon-btn edit" title="Editar">✏️</button>' +
+        '<button class="adm-icon-btn del" title="Excluir">🗑️</button>' +
+      '</div>';
+    var capturedIdx = idx;
+    item.querySelector('.edit').addEventListener('click', function(){ openEdit(capturedIdx); });
+    item.querySelector('.del').addEventListener('click', function(){ deleteProduct(capturedIdx); });
+    list.appendChild(item);
+  });
+}
+
+function addProduct() {
+  var name = document.getElementById('new-prod-name').value.trim();
+  var price = document.getElementById('new-prod-price').value.trim();
+  if (!name || !price) { alert('Preencha nome e preço!'); return; }
+  catalogData[currentCatId].products.push({name: name, price: price});
+  saveData();
+  document.getElementById('new-prod-name').value = '';
+  document.getElementById('new-prod-price').value = '';
+  renderProdList();
+}
+
+var _confirmCallback = null;
+function showConfirm(msg, callback) {
+  document.getElementById('adm-confirm-msg').textContent = msg;
+  document.getElementById('adm-confirm-overlay').classList.add('open');
+  _confirmCallback = callback;
+}
+function confirmResolve(result) {
+  document.getElementById('adm-confirm-overlay').classList.remove('open');
+  if (_confirmCallback) { var cb = _confirmCallback; _confirmCallback = null; cb(result); }
+}
+
+function deleteProduct(idx) {
+  showConfirm('Deseja excluir este produto?', function(ok) {
+    if (!ok) return;
+    catalogData[currentCatId].products.splice(idx, 1);
+    saveData();
+    renderProdList();
+  });
+}
+
+// ── Editar produto ──
+function openEdit(idx) {
+  editProdIdx = idx;
+  var p = catalogData[currentCatId].products[idx];
+  document.getElementById('edit-prod-name').value = p.name;
+  document.getElementById('edit-prod-price').value = p.price;
+  document.getElementById('adm-edit-overlay').classList.add('open');
+}
+function closeEdit() { document.getElementById('adm-edit-overlay').classList.remove('open'); }
+function saveEdit() {
+  var name = document.getElementById('edit-prod-name').value.trim();
+  var price = document.getElementById('edit-prod-price').value.trim();
+  if (!name || !price) { alert('Preencha nome e preço!'); return; }
+  catalogData[currentCatId].products[editProdIdx] = {name: name, price: price};
+  saveData();
+  closeEdit();
+  renderProdList();
+}
+
+// ── Categorias ──
+function renderCatManager() {
+  var list = document.getElementById('adm-catmgr-list');
+  list.innerHTML = '';
+  Object.keys(catalogData).forEach(function(id) {
+    var cat = catalogData[id];
+    var item = document.createElement('div');
+    item.className = 'adm-item';
+    item.innerHTML =
+      '<div class="adm-item-info"><div class="adm-item-name">' + cat.emoji + ' ' + esc(cat.label) + '</div><div class="adm-item-price">' + cat.products.length + ' produtos</div></div>' +
+      '<div class="adm-item-actions">' +
+        '<button class="adm-icon-btn edit" title="Editar">✏️</button>' +
+        '<button class="adm-icon-btn del" title="Excluir">🗑️</button>' +
+      '</div>';
+    var capturedId = id;
+    item.querySelector('.edit').addEventListener('click', function(){ openEditCat(capturedId); });
+    item.querySelector('.del').addEventListener('click', function(){ deleteCategory(capturedId); });
+    list.appendChild(item);
+  });
+}
+
+function addCategory() {
+  var emoji = document.getElementById('new-cat-emoji').value.trim() || '📦';
+  var name = document.getElementById('new-cat-name').value.trim();
+  var id = document.getElementById('new-cat-id').value.trim().toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+  if (!name || !id) { alert('Preencha nome e ID!'); return; }
+  if (catalogData[id]) { alert('Já existe uma categoria com esse ID!'); return; }
+  catalogData[id] = { emoji: emoji, label: name, products: [] };
+  saveData();
+  document.getElementById('new-cat-emoji').value = '';
+  document.getElementById('new-cat-name').value = '';
+  document.getElementById('new-cat-id').value = '';
+  renderCatManager();
+}
+
+function deleteCategory(id) {
+  var cat = catalogData[id];
+  showConfirm('Excluir a categoria "' + cat.label + '" e todos os seus ' + cat.products.length + ' produtos?', function(ok) {
+    if (!ok) return;
+    delete catalogData[id];
+    saveData();
+    renderCatManager();
+  });
+}
+
+function openEditCat(id) {
+  editCatId = id;
+  var cat = catalogData[id];
+  document.getElementById('editcat-emoji').value = cat.emoji;
+  document.getElementById('editcat-name').value = cat.label;
+  document.getElementById('adm-editcat-overlay').classList.add('open');
+}
+function closeEditCat() { document.getElementById('adm-editcat-overlay').classList.remove('open'); }
+function saveEditCat() {
+  var emoji = document.getElementById('editcat-emoji').value.trim() || '📦';
+  var name = document.getElementById('editcat-name').value.trim();
+  if (!name) { alert('Preencha o nome!'); return; }
+  catalogData[editCatId].emoji = emoji;
+  catalogData[editCatId].label = name;
+  saveData();
+  closeEditCat();
+  renderCatManager();
+  renderAdminPanel();
+}
+
+// ── Fechar overlays clicando fora ──
+['adm-login-overlay','adm-panel-overlay','adm-prods-overlay','adm-edit-overlay','adm-editcat-overlay'].forEach(function(id) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+      if (id === 'adm-prods-overlay') renderAdminPanel();
+      if (id === 'adm-panel-overlay') {
+        adminLogged = false;
+        document.getElementById('admin-fab').classList.remove('active');
+      }
+    }
+  });
+});
+// Clicar fora do confirm cancela
+document.getElementById('adm-confirm-overlay').addEventListener('click', function(e) {
+  if (e.target === this) confirmResolve(false);
+});
+
+// ── Inicializar ──
+loadData(function() {
+  renderSite();
+});
+</script>
+</body>
